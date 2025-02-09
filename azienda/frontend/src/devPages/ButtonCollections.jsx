@@ -1,64 +1,63 @@
-import '../styles/ButtonCollections.css';
+import style from '../styles/ButtonCollections.module.css';
 
 export default function ButtonsCollection() {
   return (
-    <div className="buttons-container">
-      <div className="button-box">
-        <button className="gradient-button">Gradient</button>
+    <div className={style.buttonsContainer}>
+      <div className={style.buttonBox}>
+        <button className={style.gradientButton}>Gradient</button>
       </div>
-      <div className="button-box bg-dark">
-        <button className="glass-button">Glassmorphism</button>
+      <div className={`${style.buttonBox} ${style.bgDark}`}>
+        <button className={style.glassButton}>Glassmorphism</button>
       </div>
-      <div className="button-box bg-gray">
-        <button className="neumorphism-button">Neumorphism</button>
+      <div className={`${style.buttonBox} ${style.bgGray}`}>
+        <button className={style.neumorphismButton}>Neumorphism</button>
       </div>
-      <div className="button-box">
-        <button className="three-d-button">3D</button>
+      <div className={style.buttonBox}>
+        <button className={style.threeDButton}>3D</button>
       </div>
-      <div className="button-box">
-        <button className="icon-button">
+      <div className={style.buttonBox}>
+        <button className={style.iconButton}>
           <i className="fas fa-play"></i> Play
         </button>
       </div>
-      <div className="button-box">
-        <button className="border-button">Animated Border</button>
+      <div className={style.buttonBox}>
+        <button className={style.borderButton}>Animated Border</button>
       </div>
-      <div className="button-box">
-        <button className="floating-button">Floating</button>
+      <div className={style.buttonBox}>
+        <button className={style.floatingButton}>Floating</button>
       </div>
-      <div className="button-box">
-        <button className="glowing-button">Glowing</button>
+      <div className={style.buttonBox}>
+        <button className={style.glowingButton}>Glowing</button>
       </div>
-      <div className="button-box">
-        <button className="ripple-button">Ripple Effect</button>
+      <div className={style.buttonBox}>
+        <button className={style.rippleButton}>Ripple Effect</button>
       </div>
-      <div className="button-box">
-        <button className="outline-hover-button">Outline Hover</button>
+      <div className={style.buttonBox}>
+        <button className={style.outlineHoverButton}>Outline Hover</button>
       </div>
-      <div className="button-box">
-        <button className="skewed-button">Skewed Button</button>
+      <div className={style.buttonBox}>
+        <button className={style.skewedButton}>Skewed Button</button>
       </div>
-      <div className="button-box">
-        <button className="shadow-button">Shadow</button>
+      <div className={style.buttonBox}>
+        <button className={style.shadowButton}>Shadow</button>
       </div>
-      <div className="button-box">
-        <button className="round-icon-button">
+      <div className={style.buttonBox}>
+        <button className={style.roundIconButton}>
           <i className="fas fa-heart"></i>
         </button>
       </div>
-      <div className="button-box">
-        <button className="text-icon-button">
+      <div className={style.buttonBox}>
+        <button className={style.textIconButton}>
           <i className="fas fa-download"></i> Download
         </button>
       </div>
-      <div className="button-box">
-        <button className="loading-button">
+      <div className={style.buttonBox}>
+        <button className={style.loadingButton}>
           Loading
-          <div className="spinner"></div>
+          <div className={style.spinner}></div>
         </button>
       </div>
-
-      <a href="/">home</a>
     </div>
+
   );
 };

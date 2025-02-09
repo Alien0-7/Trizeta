@@ -1,9 +1,9 @@
 import Header from '../frames/Header.jsx'
 
-export default function Home() {
+export default function Account() {
   return (
     <>
-      <Header />
+        <Header/>
     </>
   );
 };
