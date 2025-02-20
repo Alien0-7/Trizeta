@@ -8,7 +8,8 @@ import ButtonCollections from './devPages/ButtonCollections.jsx'
 import Assistance from './pages/Assistance.jsx'
 import Account from './pages/Account.jsx'
 import NotFound from './pages/NotFound.jsx'
-import SignUp from './pages/SignUp.jsx';
+import Login from './pages/SignUp.jsx';
+
 
 
 createRoot(document.getElementById('root')).render(
@@ -18,7 +19,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/" element={<Home />} />
         <Route path="/assistance" element={<Assistance />}/>
         <Route path="/account" element={<Account />}/>
-        <Route path="/sign-up" element={<SignUp />}/>
+        <Route path="/sign-up" element={<Login />}/>
 
 
         <Route path="/dev/buttons" element={<ButtonCollections />}/>
