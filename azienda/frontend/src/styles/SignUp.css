@@ -2,11 +2,10 @@
     display: flex;
     justify-content: center;
     margin: auto;
-    margin-top: 10%;
+    margin-top: 5%;
     padding-bottom: 30px;
     background-color: #23272F;
     width: 600px;
-    min-height: 570px;
 }
 
 
@@ -73,7 +72,7 @@
 
 
 .forgot-password{
-    margin-top: 27px;
+    margin-top: 78px;
     color: #797979;
     font-size: 18px;
     
@@ -104,7 +103,7 @@
     justify-content: center;
     align-items: center;
     width: 220px;
-    height: 59px;
+    height: 60px;
     color:#23272F;
     background-color: aqua;
     border-radius: 50px;

@@ -18,17 +18,35 @@ export default function Login(){
                     <div className='text'>{action}</div>
                     <div className='underline'></div>
                 </div>
+
+
+
+                {action==="Login"?<div></div>:
                 <div className='inputs'>
-                    {action==="Login"?<div></div>:<div className='input'>
+                    <div className='input'>
                         <input type='email' placeholder='Email'/>
-                    </div>}
+                    </div>
                     <div className='input'>
                         <input type='password' placeholder='Password'/>
                     </div>
                     <div className='input'>
                         <input type='password' placeholder='Confirm Password'/>
                     </div>
-                </div>
+                </div>}
+
+                {action==="Sign Up"?<div></div>:
+                <div className="inputs">
+                    <div className='input'>
+                        <input type='email' placeholder='Email'/>
+                    </div>
+                    <div className='input'>
+                        <input type='password' placeholder='Password'/>
+                    </div>
+                </div>}
+
+
+
+
                 {action==="Sign Up"?<div></div>:<div className="forgot-password">Lost Password? <span>Click Here!</span></div>}
                 <div className="submit-container">
                     <div className={action==="Login"?"submit gray":"submit"} onClick={()=>{setAction("Sign Up")}}>Sing up</div>

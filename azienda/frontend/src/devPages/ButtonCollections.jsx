@@ -1,10 +1,26 @@
 import style from '../styles/ButtonCollections.module.css';
+import axios from 'axios';
 
 export default function ButtonsCollection() {
+  const handleGradientClick = () => {
+    axios.post('http://localhost:28000/post-endpoint', {
+      key1: 'value1',
+      key2: 'value2',
+    })
+      .then((response) => {
+        console.log('Post successful:', response.data);
+      })
+      .catch((error) => {
+        console.error('There was an error with the POST request:', error);
+      });
+  };
+
   return (
     <div className={style.buttonsContainer}>
       <div className={style.buttonBox}>
-        <button className={style.gradientButton}>Gradient</button>
+        <button className={style.gradientButton} onClick={handleGradientClick}>
+          Gradient
+        </button>
       </div>
       <div className={`${style.buttonBox} ${style.bgDark}`}>
         <button className={style.glassButton}>Glassmorphism</button>
@@ -58,6 +74,5 @@ export default function ButtonsCollection() {
         </button>
       </div>
     </div>
-
   );
-};
+}
