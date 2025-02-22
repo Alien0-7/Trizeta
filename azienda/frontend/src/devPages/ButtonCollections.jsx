@@ -3,17 +3,16 @@ import axios from 'axios';
 
 export default function ButtonsCollection() {
   const handleGradientClick = () => {
-    axios.post('http://localhost:28000/post-endpoint', {
-      key1: 'value1',
-      key2: 'value2',
-    })
-      .then((response) => {
-        console.log('Post successful:', response.data);
-      })
-      .catch((error) => {
-        console.error('There was an error with the POST request:', error);
-      });
+    const userData = {
+      email: "data.email",
+      password: "data.password"
+    };
+    axios.post('http://localhost:28000', userData)
+    .then(response => console.log('Risposta:', response.data))
+    .catch(error => console.error('Errore:', error));
   };
+  
+  
 
   return (
     <div className={style.buttonsContainer}>
