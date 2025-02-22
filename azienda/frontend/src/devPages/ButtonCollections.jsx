@@ -7,7 +7,7 @@ export default function ButtonsCollection() {
       email: "data.email",
       password: "data.password"
     };
-    axios.post('http://localhost:28000', userData)
+    axios.post('http://localhost:8080/api/newuser', userData)
     .then(response => console.log('Risposta:', response.data))
     .catch(error => console.error('Errore:', error));
   };
