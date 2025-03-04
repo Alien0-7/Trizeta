@@ -9,6 +9,7 @@ import Assistance from './pages/Assistance.jsx'
 import Account from './pages/Account.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Login from './pages/SignUp.jsx';
+import Password from './pages/Password.jsx';
 
 
 
@@ -20,7 +21,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/assistance" element={<Assistance />}/>
         <Route path="/account" element={<Account />}/>
         <Route path="/sign-up" element={<Login />}/>
-
+        <Route path="/forgot-password" element={<Password />}/>
 
         <Route path="/dev/buttons" element={<ButtonCollections />}/>
 

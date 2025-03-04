@@ -70,6 +70,10 @@
     font-size: 24px;
 }
 
+.error{
+    color: red;
+}
+
 
 .forgot-password{
     margin-top: 78px;
@@ -79,10 +83,17 @@
 }
 
 
+.linkTag{
+    color: inherit;
+}
+
+
 .forgot-password span{
     color: aqua;
-    cursor: pointer;
+    cursor: pointer;        
+
 }
+
 
 
 .forgot-password span:hover{

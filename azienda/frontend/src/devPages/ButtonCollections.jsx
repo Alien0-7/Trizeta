@@ -7,7 +7,7 @@ export default function ButtonsCollection() {
       email: "data.email",
       password: "data.password"
     };
-    axios.post('http://localhost:8080/api/newuser', userData)
+    axios.post('http://orso28.gotdns.ch:28000/api/newuser', userData)
     .then(response => console.log('Risposta:', response.data))
     .catch(error => console.error('Errore:', error));
   };

@@ -27,14 +27,18 @@ li > *{
     cursor: pointer;
 }
 
+
 .linkTag {
     text-decoration: none;
+}
+
+#other-btns li a{
+    color: aqua;
 }
 
 #other-btns li a:hover {
     background-color: rgb(45, 49, 57);
 }
-
 
 
 #other-btns li a {
