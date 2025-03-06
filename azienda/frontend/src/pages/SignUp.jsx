@@ -2,8 +2,7 @@ import '../styles/SignUp.css'
 import Header from '../frames/Header';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
-
+import axios from 'axios';
 
 export default function Login(){
 
@@ -24,6 +23,15 @@ export default function Login(){
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+
+    const getQuote = () =>{
+        axios.get('http://localhost:5173/')
+        .then(res =>{
+            console.log(res)
+        }).catch(err =>{
+            console.log(err)
+        })
+    }
 
 
     const toSingUp = () =>{
