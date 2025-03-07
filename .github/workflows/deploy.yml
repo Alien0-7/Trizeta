@@ -3,7 +3,7 @@ name: Deploy to Server
 on:
   push:
     branches:
-      - main
+      - main-azienda
 
 jobs:
   deploy:
@@ -21,7 +21,7 @@ jobs:
     - name: Install sshpass
       run: sudo apt-get install -y sshpass
 
-    - name: Copy files to server
+    - name: Copy 'azienda' folder to server
       run: |
-        sshpass -p "${{ secrets.USER_PASSWORD }}" ssh -o StrictHostKeyChecking=no -p "${{ secrets.SSH_PORT }}" ${{ secrets.USER }}@${{ secrets.SERVER_IP }} "mkdir -p ${{ secrets.PATH }}"
-        sshpass -p "${{ secrets.USER_PASSWORD }}" rsync -avz --delete -e "ssh -p ${${{ secrets.SSH_PORT }}}" ./ ${{ secrets.USER }}@${{ secrets.SERVER_IP }}:${{ secrets.PATH }}
+        sshpass -p "${{ secrets.USER_PASSWORD }}" ssh -o StrictHostKeyChecking=no -p "${{ secrets.SSH_PORT }}" ${{ secrets.USER }}@${{ secrets.SERVER_IP }} "mkdir -p ${{ secrets.PATH }}/azienda"
+        sshpass -p "${{ secrets.USER_PASSWORD }}" rsync -avz --delete -e "ssh -p ${{ secrets.SSH_PORT }}" ./azienda/ ${{ secrets.USER }}@${{ secrets.SERVER_IP }}:${{ secrets.PATH }}/azienda
