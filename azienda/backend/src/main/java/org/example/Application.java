@@ -8,17 +8,25 @@ public class Application {
     public static void main(String[] args) {
         Javalin app = Javalin.create().start(7070);
 
-        if (!testConnectionWithArduino(app)) {
-            //Messaggio di errore
-            app.stop();
-        }
+//        if (!testConnectionWithArduino(app)) {
+//            //Messaggio di errore
+//            app.stop();
+//        }
+
+        app.get("/path/*",);
+
+
 
 
     }
 
-    public static boolean testConnectionWithArduino(Javalin app){
-        HandlerArduino handlerArduino = new HandlerArduino();
-        app.before(handlerArduino);
-        return handlerArduino.isConnected();
-    }
+    public void
+
+//    public static boolean testConnectionWithArduino(Javalin app){
+//        HandlerArduino handlerArduino = new HandlerArduino();
+//        app.before(handlerArduino);
+//        return handlerArduino.isConnected();
+//    }
+
+
 }
