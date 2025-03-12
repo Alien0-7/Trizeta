@@ -3,24 +3,31 @@ package org.example;
 
 import io.javalin.Javalin;
 
+import static io.javalin.apibuilder.ApiBuilder.*;
+
 public class Application {
 
     public static void main(String[] args) {
-        Javalin app = Javalin.create().start(7070);
+        Javalin app = Javalin.create(
+                //https://javalin.io/documentation#handler-groups
+                javalinConfig -> javalinConfig.router.apiBuilder(() -> {
+                    path("/api", () -> {
+                        post("/create", UserController::createUser);
+                        post("/login", UserController::loginUser);
+                    });
+                })
+        ).start(7070);
 
 //        if (!testConnectionWithArduino(app)) {
 //            //Messaggio di errore
 //            app.stop();
 //        }
 
-        app.get("/path/*",);
-
 
 
 
     }
 
-    public void
 
 //    public static boolean testConnectionWithArduino(Javalin app){
 //        HandlerArduino handlerArduino = new HandlerArduino();
