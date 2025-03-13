@@ -3,7 +3,7 @@
     justify-content: center;
     margin: auto;
     margin-top: 5%;
-    padding-bottom: 30px;
+    padding-bottom: 1.39%;
     background-color: #23272F;
     width: 600px;
 }
@@ -27,7 +27,7 @@
 
 .text{
     color: aqua;
-    font-size: 48px;
+    font-size: 3rem;
     font-weight: 700;
 }
 
