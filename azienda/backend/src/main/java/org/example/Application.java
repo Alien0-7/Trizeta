@@ -15,6 +15,12 @@ public class Application {
                         post("/create", UserController::createUser);
                         post("/login", UserController::loginUser);
                     });
+
+                    javalinConfig.bundledPlugins.enableCors(cors -> {
+                        cors.addRule(it -> {
+                            it.anyHost();
+                        });
+                    });
                 })
         ).start(7070);
 
