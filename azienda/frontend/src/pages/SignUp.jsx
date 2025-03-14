@@ -2,7 +2,7 @@ import '../styles/SignUp.css'
 import Header from '../frames/Header';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { SingUpApi, LoginApi} from '../utils/SingUp.js';
+import { SingUpApi, LoginApi} from '../utils/SignUp.js';
 
 export default function Login(){
 
