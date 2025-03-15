@@ -23,6 +23,8 @@ void listener() {
     if (inputString.equals("getTemperature")) {
       //! println non print => ln sta per "line", cioè che va a caporiga che è il metodo che usiamo per comunicare che è la fine del messaggio
       Serial.println(10);
+    } else {
+      Serial.println("Errore");
     }
 
     // reset variabili
