@@ -2,6 +2,8 @@ package org.example;
 
 import com.fazecast.jSerialComm.*;
 
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         String portPath = "";
@@ -17,22 +19,27 @@ public class Main {
         SerialPort comPort = SerialPort.getCommPort(portPath);
         comPort.setComPortParameters(9600, 8, 1, SerialPort.NO_PARITY);
         comPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
-        comPort.openPort();
         ArduinoSerialPortDataListener arduinoSerialPortDataListener = new ArduinoSerialPortDataListener(comPort);
         comPort.addDataListener(arduinoSerialPortDataListener);
+        comPort.flushIOBuffers();
 
+        comPort.openPort();
+        Thread.sleep(3000);
+
+        Scanner scanner = new Scanner(System.in);
         while (true) {
-            byte[] sendData = "getTemperature\n".getBytes();
-            comPort.writeBytes(sendData, sendData.length);
+            System.out.println("Inserisci il comando: ");
+            String str = scanner.nextLine();
 
+            byte[] sendData = (str+"\n").getBytes();
+            comPort.writeBytes(sendData, sendData.length);
+            System.out.println("MANDATO!");
             while (true) {
                 if (arduinoSerialPortDataListener.isResFinished()) {
                     System.out.println(arduinoSerialPortDataListener.getRes());
                     break;
                 }
             }
-
-            Thread.sleep(1000);
         }
 
 
