@@ -2,7 +2,7 @@ import '../styles/SignUp.css'
 import Header from '../frames/Header';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { SingUpApi, LoginApi} from '../utils/SignUp.js';
+import { SignUpApi, LoginApi} from '../utils/SignUp.js';
 
 export default function Login(){
 
@@ -59,7 +59,7 @@ export default function Login(){
             else
                 setConfirm_Error('');
             if(control === false){
-                SingUpApi(email,password);
+                SignUpApi(email,password);
             };
         }
         else{

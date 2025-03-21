@@ -32,17 +32,36 @@ export function SignUpApi(email, password) {
     });
 };
 
+
 export function LoginApi(email, password){
-    axios.post('https://reqres.in/api/register', {
-        type:login,
-        email:email,
-        password:password
-    }).then(response => {
-        if (response.status===200) {
-            console.log(response.data);
-        };
-    }).catch(response =>{
-        console.log('errore2');
+    const url = 'http://185.58.120.179:10002/api/create';  // Definisci l'URL
+    
+    fetch(url, {
+        method: 'Post',
+        headers: {
+            'Content-type': 'application/json',
+        },
+        body: JSON.stringify({
+            type:login,
+            email:email,
+            password:password
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            // Se la risposta non � ok, lancia un errore
+            throw new Error(`Errore nella richiesta: ${response.statusText}`);
+        }
+        return response.json(); // Se la risposta � OK, parsifica la risposta come JSON
+    })
+    .then(data => {
+        console.log("Dati ricevuti:", data);  // Gestisci i dati ricevuti
+    })
+    .catch(error => {
+        // Stampa l'errore e l'URL in caso di errore
+        console.error("Errore nella chiamata API:", error);
+        console.log('URL della richiesta:', url);
+        console.log('Dettagli errore:', error.message || error);
     });
 };
 
