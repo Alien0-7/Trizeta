@@ -12,7 +12,7 @@ public class Application {
                 //https://javalin.io/documentation#handler-groups
                 javalinConfig -> javalinConfig.router.apiBuilder(() -> {
                     path("/api", () -> {
-                        post("/create", UserController::createUser);
+                        post("/register", UserController::registerUser);
                         post("/login", UserController::loginUser);
                     });
 

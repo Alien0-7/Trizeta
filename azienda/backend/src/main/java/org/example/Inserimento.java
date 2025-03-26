@@ -8,11 +8,12 @@ import java.sql.Statement;
 public class Inserimento {
     public static void main(String[] args) throws ClassNotFoundException{
         // URL del DataDase
-        String url = "jdbc:mysql://localhost:3306/azienda";
+        String url = "jdbc:mysql://192.168.5.8:3307/4AI_ROSSATO";
+        //String url = "jdbc:mysql://80.20.95.170:3307/4AI_ROSSATO";
 
-        String user = "root";
-        String password = "Password_123";
-        String query = "insert into misure(temperatura, umidita, co2) values('{\\\"1\\\": 35, \\\"2\\\": 45, \\\"3\\\": 40}', '{\\\"1\\\": 24, \\\"2\\\": 35, \\\"3\\\": 12}', '{\\\"1\\\": 65, \\\"2\\\": 55, \\\"3\\\": 50}');";
+        String user = "4AI_ROSSATO";
+        String password = "123456";
+        String query = "insert into login(email, password) values('email@gmail.com', '12345');";
 
         try{
 
@@ -34,7 +35,7 @@ public class Inserimento {
 
             if(rows > 0){
 
-                System.out.println("Inserimento riuscito"+ rows);
+                System.out.println("Inserimento riuscito di "+ rows+" righe");
 
             }else{
 

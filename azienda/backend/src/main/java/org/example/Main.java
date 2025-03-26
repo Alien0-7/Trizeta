@@ -5,11 +5,12 @@ import java.sql.*;
 public class Main {
     public static void main(String[] args) throws ClassNotFoundException{
         // URL del DataDase
-        String url = "jdbc:mysql://localhost:3306/azienda";
+        //String url = "jdbc:mysql://192.168.5.8:3307/4AI_ROSSATO";
+        String url = "jdbc:mysql://80.20.95.170:3307/4AI_ROSSATO";
 
-        String user = "root";
-        String password = "Password_123";
-        String query = "Select * from misure;";
+        String user = "4AI_ROSSATO";
+        String password = "123456";
+        String query = "Select * from login;";
 
         try{
 
@@ -30,15 +31,34 @@ public class Main {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()){
 
-                String temperatura = rs.getString("temperatura");
-                String umidita = rs.getString("umidita");
-                String co2 = rs.getString("co2");
+                String e = rs.getString("email");
+
+                StringBuilder email = new StringBuilder();
+
+                for( int i = 7; i <= (e.length() - 3); i ++){
+
+                    char a = e.charAt(i);
+
+                    email.append(a);
+
+                }
+
+                String p = rs.getString("password");
+
+                StringBuilder pass = new StringBuilder();
+
+                for( int i = 7; i <= (p.length() - 3); i ++){
+
+                    char a = p.charAt(i);
+
+                    pass.append(a);
+
+                }
 
                 System.out.println();
 
-                System.out.println(temperatura);
-                System.out.println(umidita);
-                System.out.println(co2);
+                System.out.println(e);
+                System.out.println(p);
             }
 
             rs.close();
