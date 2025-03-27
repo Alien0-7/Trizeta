@@ -6,7 +6,7 @@ import { SignUpApi, LoginApi} from '../utils/SignUp.js';
 
 export default function Login(){
 
-    const[action,setAction] = useState("Sign Up");
+    const[action,setAction] = useState("Login");
 
     const[email,setEmail] = useState('');
 

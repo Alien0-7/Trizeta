@@ -10,14 +10,17 @@
     min-width: 300px;
     box-sizing: border-box;
     border-radius: 10px;
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -40%);
+    position: relative;
+    margin-top: 4vh;
+    margin-bottom: 4vh;
+    flex-direction: column;
+    max-height: 87vh;
+    overflow: hidden;
 }
 
 .second-container {
     width: 90%;
+    min-height: inherit;
 }
 
 .header {
@@ -132,8 +135,9 @@
         width: 85%;
         max-width: 400px;
         min-width: 280px;
-        top: 45%;
-        transform: translate(-50%, -45%);
+        margin-top: 10vh; 
+        min-height: auto;
+        max-height: 87vh; 
     }
 
     .text {

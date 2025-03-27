@@ -28,7 +28,7 @@ class Header extends React.Component {
                     
                     <ul id="other-btns">
                         <li><Link to="/assistance" className='linkTag'>assistenza</Link></li>
-                        <li><Link to="/sign-up" className='linkTag'>signUp</Link></li>
+                        <li><Link to="/sign-up" className='linkTag'>Login</Link></li>
                     </ul>
                 </div>
             </header>
