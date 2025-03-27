@@ -1,6 +1,4 @@
-import axios from "axios";
-
-export function SignUpApi(email, password) {
+export function SignUpApi(email, password,confirm) {
     const url = 'http://185.58.120.179:10002/api/create';  // Definisci l'URL
 
     fetch(url, {
@@ -9,9 +7,10 @@ export function SignUpApi(email, password) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            type: singup,
+            type: "singup",
             email: email,
-            password: password
+            password: password,
+            confirm:confirm
         })
     })
     .then(response => {
@@ -34,7 +33,7 @@ export function SignUpApi(email, password) {
 
 
 export function LoginApi(email, password){
-    const url = 'http://185.58.120.179:10002/api/create';  // Definisci l'URL
+    const url = 'http://185.58.120.179:10002/api/Login';  // Definisci l'URL
     
     fetch(url, {
         method: 'Post',
@@ -42,7 +41,7 @@ export function LoginApi(email, password){
             'Content-type': 'application/json',
         },
         body: JSON.stringify({
-            type:login,
+            type:"login",
             email:email,
             password:password
         })

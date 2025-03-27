@@ -6,7 +6,7 @@ import { SignUpApi, LoginApi} from '../utils/SignUp.js';
 
 export default function Login(){
 
-    const[action,setAction] = useState("Sign Up");
+    const[action,setAction] = useState("Login");
 
     const[email,setEmail] = useState('');
 
@@ -19,6 +19,19 @@ export default function Login(){
     const[password_error,setPassword_Error] = useState('');
 
     const[confirm_error,setConfirm_Error] = useState('');
+
+    const[name,setName] = useState('');
+
+    const[surname,setSurname] = useState('');
+
+    const[address,setAddress] = useState('');
+
+    const[name_error,setName_Error] = useState('');
+
+    const[surname_error,setSurname_Error] = useState('');
+
+    const[address_error,setAddress_Error] = useState('');
+
 
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -58,8 +71,29 @@ export default function Login(){
             }
             else
                 setConfirm_Error('');
-            if(control === false){
-                SignUpApi(email,password);
+            if(name===''){
+                setName_Error('Required field');
+                control=true
+            }
+            else{
+                setName_Error('');
+            }
+            if(surname===''){
+                setSurname_Error('Required field');
+                control=true
+            }
+            else{
+                setSurname_Error('');
+            }
+            if(address===''){
+                setAddress_Error('Required field');
+                control=true
+            }
+            else{
+                setAddress_Error('');
+            }
+            if(control===false){
+                SignUpApi(email,password,control_password);
             };
         }
         else{
@@ -69,6 +103,9 @@ export default function Login(){
             setControl_Password('');
             setEmail_Error('');
             setPassword_Error('');
+            setName('');
+            setSurname('');
+            setAddress('');
 
         };
     };
@@ -126,6 +163,17 @@ export default function Login(){
     const handleControl_Password = (e) =>{
         setControl_Password(e.target.value);
     };
+    const handleName = (e) =>{
+        setName(e.target.value);  
+    };
+    const handleSurname = (e) =>{
+        setSurname(e.target.value);
+    };
+    const handleAddress = (e) =>{
+        setAddress(e.target.value);
+    };
+
+
 
 
     return(
@@ -153,13 +201,25 @@ export default function Login(){
                         <input type='password' value = {control_password} onChange={handleControl_Password} placeholder='Confirm Password'/>
                     </div>
                     {confirm_error && <div className="error">{confirm_error}</div>}
+                    <div className='input'>
+                        <input type='text' value = {name} onChange={handleName} placeholder='Name'/>
+                    </div>
+                    {name_error && <div className="error">{name_error}</div>}
+                    <div className='input'>
+                        <input type='text' value = {surname} onChange={handleSurname} placeholder='Surname'/>
+                    </div>
+                    {surname_error && <div className="error">{surname_error}</div>}
+                    <div className='input'>
+                        <input type='text' value = {address} onChange={handleAddress} placeholder='Address'/>
+                    </div>
+                    {address_error && <div className="error">{address_error}</div>}
                     </>
                     }
                 </div>
                 {action==='Login'&&<div className="forgot-password">Lost Password? <span><Link to="/forgot-password" className='linkTag'>Click Here!</Link></span></div>}
 
                 <div className="submit-container">
-                    <div className={action==="Login"?"submit gray":"submit"} onClick={toSingUp}>Sing up</div>
+                    <div className={action==="Login"?"submit gray":"submit"} onClick={toSingUp}>Sign up</div>
                     <div className={action==="Sign Up"?"submit gray":"submit"} onClick={toLogin}>Login</div>
                 </div>
             </div>    
