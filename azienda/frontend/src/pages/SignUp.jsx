@@ -58,7 +58,7 @@ export default function Login(){
             }
             else
                 setConfirm_Error('');
-            if(control === false){
+            if(control===false){
                 SignUpApi(email,password);
             };
         }
