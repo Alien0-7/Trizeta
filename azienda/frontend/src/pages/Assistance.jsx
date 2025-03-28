@@ -8,13 +8,9 @@ export default function Assistance() {
         <div className={styles.firstContainer}>
           <div className={styles.assistance}>
               <h1>Assistenza</h1>
-              <p>Se stai avendo difficoltà ad utilizzare i nostri prodotti, sul nostro Centro Assistenza puoi trovare guide e suggerimenti che possono aiutarti a risolvere il tuo problema: </p>
-              <button>vai al centro assistenza</button>
-          </div>
-          <div className={styles.contacts}>
-              <h1>Contattaci</h1>
-              <p>se non trovi una trovi una risposta sul nostro Help Center, contatta un nostro operatore. Ti faremo qualche domanda preventiva per inquadrare i dettagli della tua problematica o richiesta: </p>
-              <button className='three-d-button'>Contattaci</button>
+              <p>Hai bisogno di aiuto? Il nostro team è a tua disposizione per rispondere a qualsiasi domanda e 
+                offrirti supporto rapido ed efficace. Consulta le FAQ o contattaci subito! </p>
+              <button>Vai al centro assistenza</button>
           </div>
         </div>
     </div>

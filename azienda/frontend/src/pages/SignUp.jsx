@@ -150,6 +150,9 @@ export default function Login(){
             setEmail_Error('');
             setPassword_Error('');
             setConfirm_Error('');
+            setName_Error('');
+            setSurname_Error('');
+            setAddress_Error('');
         };
     };
     
