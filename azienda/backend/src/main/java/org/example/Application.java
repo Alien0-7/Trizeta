@@ -14,6 +14,12 @@ public class Application {
                     path("/api", () -> {
                         post("/register", UserController::registerUser);
                         post("/login", UserController::loginUser);
+
+                        path("/arduino", () -> {
+                            post("/login", ArduinoController::login);
+                            post("/add", ArduinoController::addData);
+
+                        });
                     });
 
                     javalinConfig.bundledPlugins.enableCors(cors -> {
