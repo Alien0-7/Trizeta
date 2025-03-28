@@ -1,17 +1,19 @@
-export function SignUpApi(email, password,confirm) {
+import axios from "axios";
+
+export function SignUpApi(email, password,confirm,name,surname,address) {
     const url = 'http://185.58.120.179:10002/api/create';  // Definisci l'URL
 
-    fetch(url, {
-        method: 'POST',
+    axios.post(url, {
+        email: email,
+        password: password,
+        confirm: confirmm,
+        name: name,
+        surname: surname,
+        address: address
+    }, {
         headers: {
             'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            type: "singup",
-            email: email,
-            password: password,
-            confirm:confirm
-        })
+        }
     })
     .then(response => {
         if (!response.ok) {
@@ -22,6 +24,8 @@ export function SignUpApi(email, password,confirm) {
     })
     .then(data => {
         console.log("Dati ricevuti:", data);  // Gestisci i dati ricevuti
+        token = data["token"]
+        window.sessionStorage.setItem("token",token)
     })
     .catch(error => {
         // Stampa l'errore e l'URL in caso di errore
@@ -34,17 +38,15 @@ export function SignUpApi(email, password,confirm) {
 
 export function LoginApi(email, password){
     const url = 'http://185.58.120.179:10002/api/Login';  // Definisci l'URL
-    
-    fetch(url, {
-        method: 'Post',
+
+    axios.post(url, {
+        email: email,
+        password: password,
+        confirm: confirm
+    }, {
         headers: {
-            'Content-type': 'application/json',
-        },
-        body: JSON.stringify({
-            type:"login",
-            email:email,
-            password:password
-        })
+            'Content-Type': 'application/json',
+        }
     })
     .then(response => {
         if (!response.ok) {
@@ -55,6 +57,8 @@ export function LoginApi(email, password){
     })
     .then(data => {
         console.log("Dati ricevuti:", data);  // Gestisci i dati ricevuti
+        token = data["token"]
+        window.sessionStorage.setItem("token",token)
     })
     .catch(error => {
         // Stampa l'errore e l'URL in caso di errore
@@ -63,6 +67,3 @@ export function LoginApi(email, password){
         console.log('Dettagli errore:', error.message || error);
     });
 };
-
-
-

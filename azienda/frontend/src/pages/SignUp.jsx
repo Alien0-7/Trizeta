@@ -32,7 +32,6 @@ export default function Login(){
 
     const[address_error,setAddress_Error] = useState('');
 
-
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
@@ -65,12 +64,19 @@ export default function Login(){
                 else
                     setPassword_Error('');
             };
-            if(password!==control_password){
-                setConfirm_Error('Passwords do not match');
+            if(control_password===''){
+                setConfirm_Error('Required field')
                 control=true
             }
-            else
-                setConfirm_Error('');
+            else{
+                if(password!==control_password){
+                    setConfirm_Error('Passwords do not match');
+                    control=true
+                }
+                else
+                    setConfirm_Error('');
+            }
+            
             if(name===''){
                 setName_Error('Required field');
                 control=true
@@ -93,7 +99,7 @@ export default function Login(){
                 setAddress_Error('');
             }
             if(control===false){
-                SignUpApi(email,password,control_password);
+                SignUpApi(email,password,control_password,name,surname,address);
             };
         }
         else{
@@ -106,7 +112,6 @@ export default function Login(){
             setName('');
             setSurname('');
             setAddress('');
-
         };
     };
     
@@ -172,9 +177,18 @@ export default function Login(){
     const handleAddress = (e) =>{
         setAddress(e.target.value);
     };
-
-
-
+    function handleKeyPress(e){
+        if (e.key === 'Enter') {
+          if(action==="Login"){
+            toLogin();
+          }
+          else{
+            toSingUp();
+          }
+        };
+    };
+    window.addEventListener('keydown',handleKeyPress);
+    
 
     return(
         <>
