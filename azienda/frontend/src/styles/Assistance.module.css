@@ -1,33 +1,77 @@
 .firstContainer {
-    width: 80%;
-    background-color: #171717;
+    width: 70%;
+    background-color: #23272F;
     display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     margin: auto;
+    margin-top: 4vh;
+    margin-bottom: 4vh;
+    padding: 3%;
+    border-radius: 10px;
+    text-align: center;
 }
 
 h1 {
-    font-size: 40px;
-    padding-bottom: 10px;
+    font-size: 2.5rem;
+    color: aqua;
+    text-align: center;
+    margin-bottom: 10px;
 }
 
 p {
-    font-size: 18px;
-    padding-bottom: 10px;
+    font-size: 1.2rem;
+    color: #e0e0e0;
+    text-align: center;
+    margin-bottom: 10px;
+    max-width: 100%;
 }
 
 .assistance {
-    padding-inline: 50px;
-    padding-block: 50px;
-    max-width: 40%;
-}
-
-.contacts {
-    margin-left: auto;
-    padding-inline: 50px;
-    padding-block: 50px;
-    max-width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    max-width: 70%;
+    min-width: 300px;
+    text-align: center;
 }
 
 button {
-    width: auto;
+    background-color: aqua;
+    color: #171717;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #14b8b8;
+}
+
+@media screen and (max-width: 768px) {
+    .firstContainer {
+        width: 90%;
+        padding: 5%;
+    }
+
+    .assistance {
+        max-width: 90%;
+        padding: 20px;
+    }
+
+    p {
+        max-width: 90%;
+    }
+
+    button {
+        width: 100%;
+    }
 }
