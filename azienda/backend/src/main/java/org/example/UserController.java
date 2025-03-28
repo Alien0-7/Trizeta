@@ -21,8 +21,8 @@ public class UserController {
 
         String email2 = "";
 
-        String query1 = "Select * from users;";
-        String query2 = "insert into users(email, password) values('"+email1+"', '"+pass1+"');";
+        String query1 = "Select * from user;";
+        String query2 = "insert into user(email, password) values('"+email1+"', '"+pass1+"');";
 
 
         boolean result = false;
@@ -32,7 +32,6 @@ public class UserController {
 
         if(!EmailValidator.isValidEmail(email1)){
 
-            System.out.println("Email non valida");
             ctx.status(400);
             emailValidator1 = true;
 
@@ -40,7 +39,6 @@ public class UserController {
 
         if(!PasswordValidator.isValidPassword(pass1)){
 
-            System.out.println("Email non valida");
             ctx.status(400);
             passwordValidator1 = true;
 
@@ -48,7 +46,6 @@ public class UserController {
 
         if(!PasswordValidator.isValidPassword(pass2)){
 
-            System.out.println("Email non valida");
             ctx.status(400);
             passwordValidator2 = true;
 
@@ -86,9 +83,6 @@ public class UserController {
 
                     }
 
-                    System.out.println();
-
-                    System.out.println(email2);
                 }
 
                 if(!pass1.equals(pass2)) {
@@ -136,7 +130,7 @@ public class UserController {
 
     public static void loginUser(@NotNull Context ctx) {
         //String url = "jdbc:mysql://192.168.5.8:3307/4AI_ROSSATO";
-        String query = "Select * from users;";
+        String query = "Select * from user;";
 
         String email1 = ctx.formParam("email");
         String pass1 = ctx.formParam("password");
