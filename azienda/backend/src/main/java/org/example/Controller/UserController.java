@@ -1,7 +1,9 @@
-package org.example;
+package org.example.Controller;
 
 import io.javalin.http.Context;
 
+import org.example.Utils.EmailValidator;
+import org.example.Utils.PasswordValidator;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.*;
@@ -19,7 +21,7 @@ public class UserController {
         String pass1 = ctx.formParam("password1");
         String pass2 = ctx.formParam("password2");
 
-        String email2 = "";
+        String email2;
 
         String query1 = "Select * from user;";
         String query2 = "insert into user(email, password) values('"+email1+"', '"+pass1+"');";
@@ -132,13 +134,12 @@ public class UserController {
         //String url = "jdbc:mysql://192.168.5.8:3307/4AI_ROSSATO";
         String query = "Select * from user;";
 
-        String email1 = ctx.formParam("email");
-        String pass1 = ctx.formParam("password");
+        String reqEmail = ctx.formParam("email");
+        String reqPassword = ctx.formParam("password");
+        //! ensure email and password are not null
 
-        String email2 = "";
-        String pass2 = "";
-
-        boolean result = false;
+        String email2, pass2;
+        boolean isUserFound = false;
 
         try{
 
@@ -157,17 +158,16 @@ public class UserController {
             System.out.println("Connesso con il DataBase");
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
-            while (rs.next()){
 
+            while (rs.next() && !isUserFound) {
+                //TODO rename email2 and pass2
                 email2 = rs.getString("email");
-
                 pass2 = rs.getString("password");
 
-                if(email1.equals(email2) && pass1.equals(pass2)) {
-
-                    ctx.status(200);
-                    result = true;
-                    break;
+                if(reqEmail.equals(email2) && reqPassword.equals(pass2)) {
+                    //TODO send JWT token
+                    ctx.status(200).json("");
+                    isUserFound = true;
 
                 }
 
@@ -177,8 +177,7 @@ public class UserController {
                 System.out.println(pass2);
             }
 
-            if(!result){
-
+            if (!isUserFound) {
                 ctx.status(401);
 
             }
