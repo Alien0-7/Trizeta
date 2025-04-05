@@ -3,6 +3,7 @@ package org.example;
 
 import io.javalin.Javalin;
 import org.example.Controller.ArduinoController;
+import org.example.Controller.DatabaseController;
 import org.example.Controller.UserController;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
@@ -10,8 +11,8 @@ import static io.javalin.apibuilder.ApiBuilder.*;
 public class Application {
 
     public static void main(String[] args) {
-        //TODO configure property of slf4j
 
+        DatabaseController.initDatabase();
         Javalin app = Javalin.create(
                 //https://javalin.io/documentation#handler-groups
                 javalinConfig -> javalinConfig.router.apiBuilder(() -> {
