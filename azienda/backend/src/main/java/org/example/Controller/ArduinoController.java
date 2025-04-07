@@ -17,9 +17,7 @@ public class ArduinoController {
     public static void registerArduino(@NotNull Context ctx) {
         //TODO search email and psw given
         //TODO check if that user exist and if it hasn't already an Arduino associated
-        UUID uuid = UUID.randomUUID();
-        ctx.json(Map.of("uuid", uuid.toString()));
-        //TODO add this uuid to Arduino table to uuids column
+        ctx.json(Map.of("uuid", "uuid"));
 
     }
 
