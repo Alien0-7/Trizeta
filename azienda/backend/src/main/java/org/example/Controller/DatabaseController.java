@@ -13,9 +13,15 @@ import java.sql.*;
 import java.util.Arrays;
 import java.util.Properties;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+
+
 public class DatabaseController {
     private static final Logger log = LoggerFactory.getLogger(DatabaseController.class);
-    private static String DBUser, DBPassword, url, table, columnPassword, columnEmail, columnUUID;
+    private static String DBUser, DBPassword, url, table, columnPassword, columnEmail, columnUUID, columnName, columnSurname, columnAddress;
 
     public static void initDatabase() {
 
@@ -30,13 +36,16 @@ public class DatabaseController {
             properties.setProperty("columnPassword","");
             properties.setProperty("columnEmail","");
             properties.setProperty("columnUUID","");
+            properties.setProperty("columnName","");
+            properties.setProperty("columnSurname","");
+            properties.setProperty("columnAddress","");
 
             try {
                 FileOutputStream fos = new FileOutputStream(configFile);
                 properties.store(fos, "config file for this project");
                 fos.close();
             } catch (Exception e) {
-                System.out.println("Error while writing: " + e);
+                log.error("Error while writing: " + e);
             }
 
         } else {
@@ -50,6 +59,9 @@ public class DatabaseController {
                 columnPassword = properties.getProperty("columnPassword");
                 columnEmail = properties.getProperty("columnEmail");
                 columnUUID = properties.getProperty("columnUUID");
+                columnName = properties.getProperty("columnName");
+                columnSurname = properties.getProperty("columnSurname");
+                columnAddress = properties.getProperty("columnAddress");
 
             } catch (Exception ignored) {}
         }
@@ -57,11 +69,11 @@ public class DatabaseController {
         try{
 
             Class.forName("com.mysql.jdbc.Driver");
-            System.out.println("Driver caricati con successo");
+            log.info("Driver caricati con successo");
 
         } catch (ClassNotFoundException e) {
             //! block all req. for the database
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
 
         }
 
@@ -69,7 +81,6 @@ public class DatabaseController {
 
     }
 
-    // TODO Replace printStackTrace with proper logging (SLF4J)
     // TODO Implement secure password storage using hashing (SHA256)
     // TODO Connect getDataRequests() to a real "requests" table in the database
     // TODO Handle SQL exceptions more specifically and return *meaningful* error messages
@@ -79,7 +90,7 @@ public class DatabaseController {
 
         try {
             Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
-            System.out.println("Connesso con il DataBase");
+            log.info("Connesso con il DataBase");
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("Select * from "+table+";");
 
@@ -96,16 +107,16 @@ public class DatabaseController {
             }
 
 
-            int rows = stmt.executeUpdate("insert into "+table+"("+columnUUID+", " +columnEmail+", "+columnPassword+") " +
-                    "values('"+ UUIDUtils.uuidToBytes(user.getUUID()) +"', '"+user.getEmail()+"', '"+user.getPassword()+"');");
+            int rows = stmt.executeUpdate("insert into "+table+"("+columnUUID+", " +columnEmail+", "+columnPassword+" , "+columnName+", "+columnSurname+", "+columnAddress+") " +
+                    "values('"+ UUIDUtils.uuidToBytes(user.getUUID()) +"', '"+user.getEmail()+"', '"+hashPassword(user.getPassword())+"', '"+user.getName()+"', '"+user.getSurname()+"', '"+user.getAddress()+"');");
 
             if (rows > 0) {
 
-                System.out.println("Inserimento riuscito di " + rows + " righe");
+                log.info("Inserimento riuscito di " + rows + " righe");
 
             } else {
 
-                System.out.println("Inserimento fallito");
+                log.error("Inserimento fallito");
                 return false;
 
             }
@@ -115,8 +126,7 @@ public class DatabaseController {
             stmt.close();
             connection.close();
 
-            System.out.println();
-            System.out.println("Connessione chiusa con successo");
+            log.info("Connessione chiusa con successo");
         } catch (Exception e) {
             log.error(e.getMessage());
             return null;
@@ -134,7 +144,7 @@ public class DatabaseController {
         try {
 
             Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
-            System.out.println("Connesso con il DataBase");
+            log.info("Connesso con il DataBase");
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("Select * from "+table+";");
 
@@ -143,35 +153,49 @@ public class DatabaseController {
                 String currentPassword = rs.getString(columnPassword);
 
                 if(userEmail.equals(currentEmail) && userPassword.equals(currentPassword)) {
-                    User user = new User(currentEmail, currentPassword, UUIDUtils.bytesToUUID(rs.getBytes(columnUUID)));
+                    User user = new User(currentEmail, currentPassword, null, null, null, UUIDUtils.bytesToUUID(rs.getBytes(columnUUID)));
                     rs.close();
                     stmt.close();
                     connection.close();
-                    System.out.println("Connessione chiusa con successo, Utente trovato");
+                    log.info("Connessione chiusa con successo, Utente trovato");
                     return user;
                 }
 
-                System.out.println();
-
-                System.out.println(currentEmail);
-                System.out.println(currentPassword);
+                log.info(currentEmail);
+                log.info(currentPassword);
             }
 
             rs.close();
             stmt.close();
             connection.close();
 
-            System.out.println();
-            System.out.println("Connessione chiusa con successo, Utente non trovato");
+            log.info("Connessione chiusa con successo, Utente non trovato");
 
         } catch (SQLException e) {
 
-            System.out.println("Connessione fallita" + e.getMessage());
+            log.error("Connessione fallita" + e.getMessage());
 
         }
 
         return null;
     }
+
+    private static String hashPassword(String password) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] encodedHash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : encodedHash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Errore durante l'hashing della password", e);
+        }
+    }
+
 
     public static boolean searchArduino() {
         return false;

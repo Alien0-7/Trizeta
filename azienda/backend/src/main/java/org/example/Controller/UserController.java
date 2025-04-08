@@ -24,6 +24,9 @@ public class UserController {
         String email1 = ctx.formParam("email");
         String pass1 = ctx.formParam("password1");
         String pass2 = ctx.formParam("password2");
+        String name = ctx.formParam("name");
+        String surname = ctx.formParam("surname");
+        String address = ctx.formParam("address");
 
         //TODO fix validators for numbers (email validator) and for special characters (password validator)
         if (EmailValidator.isValidEmail(email1) && PasswordValidator.isValidPassword(pass1) && PasswordValidator.isValidPassword(pass2)) {
@@ -36,7 +39,7 @@ public class UserController {
 
             }
 
-            Boolean isUserAdded = DatabaseController.addUser(new User(email1, pass1, UUID.randomUUID()));
+            Boolean isUserAdded = DatabaseController.addUser(new User(email1, pass1, name, surname, address,UUID.randomUUID()));
             if (isUserAdded == null) {
                 ctx.status(500);
             } else if (isUserAdded){
