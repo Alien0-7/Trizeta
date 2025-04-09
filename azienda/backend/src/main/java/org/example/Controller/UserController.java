@@ -28,6 +28,7 @@ public class UserController {
         String surname = ctx.formParam("surname");
         String address = ctx.formParam("address");
 
+
         //TODO fix validators for numbers (email validator) and for special characters (password validator)
         if (EmailValidator.isValidEmail(email1) && PasswordValidator.isValidPassword(pass1) && PasswordValidator.isValidPassword(pass2)) {
 

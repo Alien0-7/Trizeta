@@ -106,6 +106,11 @@ public class DatabaseController {
 
             }
 
+            if(user.getName().equalsIgnoreCase("") || user.getName() == null || user.getSurname().equalsIgnoreCase("") || user.getSurname() == null || user.getAddress().equalsIgnoreCase("") || user.getAddress() == null){
+
+                return false;
+
+            }
 
             int rows = stmt.executeUpdate("insert into "+table+"("+columnUUID+", " +columnEmail+", "+columnPassword+" , "+columnName+", "+columnSurname+", "+columnAddress+") " +
                     "values('"+ UUIDUtils.uuidToBytes(user.getUUID()) +"', '"+user.getEmail()+"', '"+hashPassword(user.getPassword())+"', '"+user.getName()+"', '"+user.getSurname()+"', '"+user.getAddress()+"');");
