@@ -1,8 +1,10 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
+
 import './styles/index.css'
+import Header from './frames/Header.jsx';
 import Home from './pages/Home.jsx'
 import ButtonCollections from './devPages/ButtonCollections.jsx'
 import Assistance from './pages/Assistance.jsx'
@@ -15,18 +17,21 @@ import Password from './pages/Password.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/assistance" element={<Assistance />}/>
-        <Route path="/account" element={<Account />}/>
-        <Route path="/sign-up" element={<Login />}/>
-        <Route path="/forgot-password" element={<Password />}/>
-
-        <Route path="/dev/buttons" element={<ButtonCollections />}/>
-
-        <Route path="*" element={<NotFound />}/>
-      </Routes>
-    </BrowserRouter>
-  </StrictMode>,
-)
+      <BrowserRouter>
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+          <Header />
+          <div style={{ flex: 1, overflowY: 'auto' }}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/assistance" element={<Assistance />} />
+              <Route path="/account" element={<Account />} />
+              <Route path="/sign-up" element={<Login />} />
+              <Route path="/forgot-password" element={<Password />} />
+              <Route path="/dev/buttons" element={<ButtonCollections />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+        </div>
+      </BrowserRouter>
+  </StrictMode>
+);

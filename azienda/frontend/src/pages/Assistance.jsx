@@ -4,7 +4,6 @@ import styles from '../styles/Assistance.module.css'
 export default function Assistance() {
   return (
     <div className={styles.centerDiv}>
-        <Header/>
         <div className={styles.firstContainer}>
           <div className={styles.assistance}>
               <h1>Assistenza</h1>

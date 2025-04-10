@@ -31,6 +31,8 @@ export default function Login(){
     const[surname_error,setSurname_Error] = useState('');
 
     const[address_error,setAddress_Error] = useState('');
+     
+    const[return_error,setReturn_Error] = useState('');
 
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -112,6 +114,10 @@ export default function Login(){
             setName('');
             setSurname('');
             setAddress('');
+            setName_Error('');
+            setSurname_Error('');
+            setAddress_Error('');
+            setReturn_Error('');
         };
     };
     
@@ -144,7 +150,7 @@ export default function Login(){
                     setPassword_Error('');
             };
             if(control === false){
-                LoginApi(email,password);
+                LoginApi(email,password,setReturn_Error);
             };
         }
         else{
@@ -155,6 +161,10 @@ export default function Login(){
             setEmail_Error('');
             setPassword_Error('');
             setConfirm_Error('');
+            setName_Error('');
+            setSurname_Error('');
+            setAddress_Error('');
+            setReturn_Error('');
         };
     };
     
@@ -192,7 +202,6 @@ export default function Login(){
 
     return(
         <>
-        <Header></Header>
         <div className='container'>
             <div className="second-container">
                 <div className='header'>
@@ -209,6 +218,7 @@ export default function Login(){
                         <input type='password' value = {password} onChange={handlePassword} placeholder='Password'/>
                     </div>
                     {password_error && <div className="error">{password_error}</div>}
+                    {return_error && <div className="error">{return_error}</div>}
                     {action==="Sign Up"&&
                     <>
                     <div className='input'>

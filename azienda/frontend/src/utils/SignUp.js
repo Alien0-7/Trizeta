@@ -1,12 +1,12 @@
 import axios from "axios";
 
 export function SignUpApi(email, password,confirm,name,surname,address) {
-    const url = 'http://185.58.120.179:10002/api/create';  // Definisci l'URL
+    const url = 'http://2.37.63.53:10004/api/register';  // Definisci l'URL
 
     axios.post(url, {
         email: email,
         password: password,
-        confirm: confirmm,
+        password2: confirm,
         name: name,
         surname: surname,
         address: address
@@ -25,7 +25,7 @@ export function SignUpApi(email, password,confirm,name,surname,address) {
     .then(data => {
         console.log("Dati ricevuti:", data);  // Gestisci i dati ricevuti
         token = data["token"]
-        window.sessionStorage.setItem("token",token)
+        window.localStorage.setItem("token",token)
     })
     .catch(error => {
         // Stampa l'errore e l'URL in caso di errore
@@ -36,13 +36,12 @@ export function SignUpApi(email, password,confirm,name,surname,address) {
 };
 
 
-export function LoginApi(email, password){
-    const url = 'http://185.58.120.179:10002/api/Login';  // Definisci l'URL
+export function LoginApi(email, password, setError){
+    const url = 'http://2.37.63.53:10004/api/login';  // Definisci l'URL
 
     axios.post(url, {
         email: email,
         password: password,
-        confirm: confirm
     }, {
         headers: {
             'Content-Type': 'application/json',
@@ -65,5 +64,8 @@ export function LoginApi(email, password){
         console.error("Errore nella chiamata API:", error);
         console.log('URL della richiesta:', url);
         console.log('Dettagli errore:', error.message || error);
+        if (error.response && error.response.status === 400) {
+            setError('Mail o Password errati');
+        }
     });
 };
