@@ -2,7 +2,6 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-
 import './styles/index.css'
 import Header from './frames/Header.jsx';
 import Home from './pages/Home.jsx'
@@ -12,11 +11,21 @@ import Account from './pages/Account.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Login from './pages/SignUp.jsx';
 import Password from './pages/Password.jsx';
+import createStore from 'react-auth-kit/createStore';
+import AuthProvider from 'react-auth-kit';
 
-
+const store = createStore({
+  authName:'_auth',
+  authType:'cookie',
+  cookieDomain: window.location.hostname,
+  cookieSecure: window.location.protocol === 'https:',
+});
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+    <AuthProvider 
+    store = {store}>
+      
       <BrowserRouter>
         <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
           <Header />
@@ -33,5 +42,6 @@ createRoot(document.getElementById('root')).render(
           </div>
         </div>
       </BrowserRouter>
+    </AuthProvider>
   </StrictMode>
 );

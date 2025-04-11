@@ -1,7 +1,9 @@
 import axios from "axios";
+import useSignIn from "react-auth-kit/hooks/useSignIn";
 
 export function SignUpApi(email, password,confirm,name,surname,address) {
     const url = 'http://2.37.63.53:10004/api/register';  // Definisci l'URL
+    const singIn = useSignIn();
 
     axios.post(url, {
         email: email,
