@@ -3,6 +3,7 @@ package org.example;
 
 import io.javalin.Javalin;
 import org.example.Controller.ArduinoController;
+import org.example.Controller.BuildController;
 import org.example.Controller.DatabaseController;
 import org.example.Controller.UserController;
 
@@ -19,6 +20,7 @@ public class Application {
                     path("/api", () -> {
                         post("/register", UserController::registerUser);
                         post("/login", UserController::loginUser);
+                        post("/temperature", BuildController::getTemperature);
 
                         path("/arduino", () -> {
                             post("/register", ArduinoController::registerArduino);

@@ -157,7 +157,7 @@ public class DatabaseController {
                 String currentEmail = rs.getString(columnEmail);
                 String currentPassword = rs.getString(columnPassword);
 
-                if(userEmail.equals(currentEmail) && userPassword.equals(currentPassword)) {
+                if(userEmail.equals(currentEmail) && hashPassword(userPassword).equals(currentPassword)) {
                     User user = new User(currentEmail, currentPassword, null, null, null, UUIDUtils.bytesToUUID(rs.getBytes(columnUUID)));
                     rs.close();
                     stmt.close();
