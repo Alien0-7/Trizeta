@@ -21,7 +21,21 @@ import java.security.NoSuchAlgorithmException;
 
 public class DatabaseController {
     private static final Logger log = LoggerFactory.getLogger(DatabaseController.class);
-    private static String DBUser, DBPassword, url, table, columnPassword, columnEmail, columnUUID, columnName, columnSurname, columnAddress;
+    private static String DBUser;
+    private static String DBPassword;
+    private static String url;
+    private static String table;
+    private static String columnPassword;
+    private static String columnEmail;
+    private static String columnUUID;
+    private static String columnName;
+    private static String columnSurname;
+    private static String columnAddress;
+    private static String error;
+
+    public static String getError() {
+        return error;
+    }
 
     public static void initDatabase() {
 
@@ -81,7 +95,6 @@ public class DatabaseController {
 
     }
 
-    // TODO Implement secure password storage using hashing (SHA256)
     // TODO Connect getDataRequests() to a real "requests" table in the database
     // TODO Handle SQL exceptions more specifically and return *meaningful* error messages
     // TODO Sanitize and validate input data to ensure safety, even with prepared statements
@@ -100,6 +113,7 @@ public class DatabaseController {
 
                 if (user.getEmail().equals(email2)) {
 
+                    error = "Email already existed";
                     return false;
 
                 }
@@ -108,6 +122,7 @@ public class DatabaseController {
 
             if(user.getName().equalsIgnoreCase("") || user.getName() == null || user.getSurname().equalsIgnoreCase("") || user.getSurname() == null || user.getAddress().equalsIgnoreCase("") || user.getAddress() == null){
 
+                error = "invalid value";
                 return false;
 
             }

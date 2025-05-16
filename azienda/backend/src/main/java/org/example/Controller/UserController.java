@@ -41,16 +41,19 @@ public class UserController {
             }
 
             Boolean isUserAdded = DatabaseController.addUser(new User(email1, pass1, name, surname, address,UUID.randomUUID()));
+
             if (isUserAdded == null) {
                 ctx.status(500);
             } else if (isUserAdded){
                 ctx.status(200);
             } else {
                 ctx.status(400);
+                ctx.json(Map.of("Error", DatabaseController.getError()));
             }
 
         } else {
             ctx.status(400);
+            ctx.json(Map.of("Error", "Invalid parameters"));
         }
 
     }
