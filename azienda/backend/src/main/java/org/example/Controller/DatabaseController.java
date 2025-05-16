@@ -80,8 +80,6 @@ public class DatabaseController {
         // TODO (optional) if table doesn't exists create it
 
     }
-
-    // TODO Implement secure password storage using hashing (SHA256)
     // TODO Connect getDataRequests() to a real "requests" table in the database
     // TODO Handle SQL exceptions more specifically and return *meaningful* error messages
     // TODO Sanitize and validate input data to ensure safety, even with prepared statements
@@ -147,7 +145,6 @@ public class DatabaseController {
     public static User searchUser(String userEmail, String userPassword) {
         //! ensure email and password are not null
         try {
-
             Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
             log.info("Connesso con il DataBase");
             Statement stmt = connection.createStatement();

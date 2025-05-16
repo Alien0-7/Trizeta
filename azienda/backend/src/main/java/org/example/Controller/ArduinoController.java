@@ -9,8 +9,8 @@ import java.util.UUID;
 public class ArduinoController {
     public static void addData(Context ctx) {
         String uuid = ctx.formParam("uuid");
-        //TODO search if the uuid exist in the database
-        //TODO if so, return the data requests
+
+        System.out.println(ctx.body());
 
     }
 
