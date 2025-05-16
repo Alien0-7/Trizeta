@@ -1,8 +1,8 @@
 import '../styles/SignUp.css'
-import Header from '../frames/Header';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { SignUpApi, LoginApi} from '../utils/SignUp.js';
+import { SignUpApi, LoginApi} from '../utils/SignUpLogin.js';
+import useSignIn from 'react-auth-kit/hooks/useSignIn';
 
 export default function Login(){
 
@@ -37,6 +37,8 @@ export default function Login(){
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+
+    const signIn = useSignIn();
 
 
     const toSingUp = () =>{
@@ -101,7 +103,13 @@ export default function Login(){
                 setAddress_Error('');
             }
             if(control===false){
-                SignUpApi(email,password,control_password,name,surname,address);
+                const data = SignUpApi(email,password,control_password,name,surname,address);
+                signIn({
+                    token: data.token,
+                    expireIn: 259200,
+                    tokenType: "Bearer",
+                    authState: {email: data.user.email},
+                });
             };
         }
         else{
@@ -150,7 +158,13 @@ export default function Login(){
                     setPassword_Error('');
             };
             if(control === false){
-                LoginApi(email,password,setReturn_Error);
+                const data = LoginApi(email,password);
+                signIn({
+                    token: data.token,
+                    expireIn: 259200,
+                    tokenType: "Bearer",
+                    authState: {email: data.email},
+                });
             };
         }
         else{

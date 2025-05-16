@@ -1,4 +1,3 @@
-import Header from '../frames/Header.jsx'
 import styles from '../styles/Assistance.module.css'
 
 export default function Assistance() {

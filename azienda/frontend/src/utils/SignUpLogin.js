@@ -1,10 +1,8 @@
 import axios from "axios";
-import useSignIn from "react-auth-kit/hooks/useSignIn";
 
-export function SignUpApi(email, password,confirm,name,surname,address) {
-    const url = 'http://2.37.63.53:10004/api/register';  // Definisci l'URL
-    const singIn = useSignIn();
+export async function SignUpApi(email, password,confirm,name,surname,address) {
 
+    const url = 'http://trizeta.duckdns.org:10001/api/register';  // Definisci l'URL
     axios.post(url, {
         email: email,
         password: password,
@@ -22,12 +20,10 @@ export function SignUpApi(email, password,confirm,name,surname,address) {
             // Se la risposta non � ok, lancia un errore
             throw new Error(`Errore nella richiesta: ${response.statusText}`);
         }
-        return response.json(); // Se la risposta � OK, parsifica la risposta come JSON
     })
     .then(data => {
         console.log("Dati ricevuti:", data);  // Gestisci i dati ricevuti
-        token = data["token"]
-        window.localStorage.setItem("token",token)
+        return response.data();
     })
     .catch(error => {
         // Stampa l'errore e l'URL in caso di errore
@@ -35,12 +31,11 @@ export function SignUpApi(email, password,confirm,name,surname,address) {
         console.log('URL della richiesta:', url);
         console.log('Dettagli errore:', error.message || error);
     });
-};
+}
 
-
-export function LoginApi(email, password, setError){
-    const url = 'http://2.37.63.53:10004/api/login';  // Definisci l'URL
-
+export function LoginApi(email,password){
+   
+    const url = 'http://trizeta.duckdns.org:10001/api/login';  // Definisci l'URL
     axios.post(url, {
         email: email,
         password: password,
@@ -54,20 +49,18 @@ export function LoginApi(email, password, setError){
             // Se la risposta non � ok, lancia un errore
             throw new Error(`Errore nella richiesta: ${response.statusText}`);
         }
-        return response.json(); // Se la risposta � OK, parsifica la risposta come JSON
     })
     .then(data => {
         console.log("Dati ricevuti:", data);  // Gestisci i dati ricevuti
-        token = data["token"]
-        window.sessionStorage.setItem("token",token)
+        return response.data();
     })
     .catch(error => {
         // Stampa l'errore e l'URL in caso di errore
         console.error("Errore nella chiamata API:", error);
         console.log('URL della richiesta:', url);
         console.log('Dettagli errore:', error.message || error);
-        if (error.response && error.response.status === 400) {
+    if (error.response && error.response.status === 400) {
             setError('Mail o Password errati');
-        }
+    };
     });
-};
+}

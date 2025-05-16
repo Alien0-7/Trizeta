@@ -18,6 +18,7 @@ class Header extends React.Component {
     render() {
         return (
             <header>
+
                 <div className="header-items-container">
                     <Link to="/" className='linkTag'>
                         <ul id="logo-container">
