@@ -104,13 +104,18 @@ export default function Login(){
             }
             if(control===false){
                 const data = SignUpApi(email,password,control_password,name,surname,address);
-                signIn({
-                    token: data.token,
-                    expireIn: 259200,
-                    tokenType: "Bearer",
-                    authState: {email: data.user.email},
-                });
-                navigate('profile')
+                if (!data || !data.token || !data.email) {
+                    throw new Error("Dati incompleti ricevuti dal server");
+                }
+                else{
+                    signIn({
+                        token: data.token,
+                        expireIn: 259200,
+                        tokenType: "Bearer",
+                        authState: {email: data.email},
+                    });
+                    navigate('profile')
+                }
             };
         }
         else{
@@ -160,13 +165,18 @@ export default function Login(){
             };
             if(control === false){
                 const data = LoginApi(email,password);
-                signIn({
-                    token: data.token,
-                    expireIn: 259200,
-                    tokenType: "Bearer",
-                    authState: {email: data.email},
-                });
-                navigate('profile')
+                if (!data || !data.token || !data.email) {
+                    throw new Error("Dati incompleti ricevuti dal server");
+                }
+                else{
+                    signIn({
+                        token: data.token,
+                        expireIn: 259200,
+                        tokenType: "Bearer",
+                        authState: {email: data.email},
+                    });
+                    navigate('profile')
+                }
             };
         }
         else{
@@ -230,7 +240,7 @@ export default function Login(){
                     </div>
                     {email_error && <div className="error">{email_error}</div>}
                     <div className='input'>
-                        <input type='password' value = {password} onChange={handlePassword} placeholder='Password'/>
+                        <input type='password' value = {password} onChange={handlePassword} placeholder='Password'autocomplete="new-password"/>
                     </div>
                     {password_error && <div className="error">{password_error}</div>}
                     {return_error && <div className="error">{return_error}</div>}

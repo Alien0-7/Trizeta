@@ -43,7 +43,7 @@ createRoot(document.getElementById('root')).render(
                   <Profile/>
                 </RequireAuth>}/>
               <Route path="/setting" element={
-                <RequireAuth fallbackPath='/sign-up'>
+                <RequireAuth fallbackPath="/sign-up">
                   <Settings/>
                 </RequireAuth>
               }/>
