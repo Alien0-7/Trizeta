@@ -1,12 +1,12 @@
 import axios from "axios";
 
-export async function SignUpApi(email, password,confirm,name,surname,address) {
+export async function SignUpApi(email, password,password2,name,surname,address) {
 
     const url = 'http://trizeta.duckdns.org:10001/api/register';  // Definisci l'URL
     axios.post(url, {
         email: email,
-        password: password,
-        password2: confirm,
+        password1: password,
+        password2: password2,
         name: name,
         surname: surname,
         address: address
@@ -20,10 +20,10 @@ export async function SignUpApi(email, password,confirm,name,surname,address) {
             // Se la risposta non � ok, lancia un errore
             throw new Error(`Errore nella richiesta: ${response.statusText}`);
         }
+        return response.data;
     })
     .then(data => {
         console.log("Dati ricevuti:", data);  // Gestisci i dati ricevuti
-        return response.data();
     })
     .catch(error => {
         // Stampa l'errore e l'URL in caso di errore

@@ -13,6 +13,7 @@ export default function Assistance() {
               <h1>Contattaci</h1>
               <p>Ogni tua richiesta è importante per noi. Il nostro team è pronto a risponderti con rapidità e attenzione, quando ne hai bisogno. </p>
               <button className='three-d-button'>Contattaci</button>
+
           </div>
         </div>
     </div>

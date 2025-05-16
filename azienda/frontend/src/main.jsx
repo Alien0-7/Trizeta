@@ -8,6 +8,7 @@ import Home from './pages/Home.jsx'
 import ButtonCollections from './devPages/ButtonCollections.jsx'
 import Assistance from './pages/Assistance.jsx'
 import Profile from './pages/Profile.jsx'
+import Settings from './pages/Settings.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Login from './pages/SignUp.jsx';
 import Password from './pages/Password.jsx';
@@ -38,9 +39,14 @@ createRoot(document.getElementById('root')).render(
               <Route path="/dev/buttons" element={<ButtonCollections />} />
               <Route path="*" element={<NotFound />} />
               <Route path="/profile" element={
-                <RequireAuth fallbackPath="/">
+                <RequireAuth fallbackPath="/sign-up">
                   <Profile/>
                 </RequireAuth>}/>
+              <Route path="/setting" element={
+                <RequireAuth fallbackPath="/sign-up">
+                  <Settings/>
+                </RequireAuth>
+              }/>
             </Routes>
           </div>
         </div>

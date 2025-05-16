@@ -1,6 +1,6 @@
 import '../styles/SignUp.css'
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { SignUpApi, LoginApi} from '../utils/SignUpLogin.js';
 import useSignIn from 'react-auth-kit/hooks/useSignIn';
 
@@ -39,7 +39,7 @@ export default function Login(){
     const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
 
     const signIn = useSignIn();
-
+    const navigate = useNavigate();
 
     const toSingUp = () =>{
         if(action==="Sign Up"){
@@ -104,12 +104,18 @@ export default function Login(){
             }
             if(control===false){
                 const data = SignUpApi(email,password,control_password,name,surname,address);
-                signIn({
-                    token: data.token,
-                    expireIn: 259200,
-                    tokenType: "Bearer",
-                    authState: {email: data.user.email},
-                });
+                if (!data || !data.token || !data.email) {
+                    throw new Error("Dati incompleti ricevuti dal server");
+                }
+                else{
+                    signIn({
+                        token: data.token,
+                        expireIn: 259200,
+                        tokenType: "Bearer",
+                        authState: {email: data.email},
+                    });
+                    navigate('profile')
+                }
             };
         }
         else{
@@ -159,12 +165,18 @@ export default function Login(){
             };
             if(control === false){
                 const data = LoginApi(email,password);
-                signIn({
-                    token: data.token,
-                    expireIn: 259200,
-                    tokenType: "Bearer",
-                    authState: {email: data.email},
-                });
+                if (!data || !data.token || !data.email) {
+                    throw new Error("Dati incompleti ricevuti dal server");
+                }
+                else{
+                    signIn({
+                        token: data.token,
+                        expireIn: 259200,
+                        tokenType: "Bearer",
+                        authState: {email: data.email},
+                    });
+                    navigate('profile')
+                }
             };
         }
         else{
@@ -178,7 +190,6 @@ export default function Login(){
             setName_Error('');
             setSurname_Error('');
             setAddress_Error('');
-            setReturn_Error('');
         };
     };
     
@@ -229,7 +240,7 @@ export default function Login(){
                     </div>
                     {email_error && <div className="error">{email_error}</div>}
                     <div className='input'>
-                        <input type='password' value = {password} onChange={handlePassword} placeholder='Password'/>
+                        <input type='password' value = {password} onChange={handlePassword} placeholder='Password'autocomplete="new-password"/>
                     </div>
                     {password_error && <div className="error">{password_error}</div>}
                     {return_error && <div className="error">{return_error}</div>}
