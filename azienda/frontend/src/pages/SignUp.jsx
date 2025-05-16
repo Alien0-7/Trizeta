@@ -1,6 +1,6 @@
 import '../styles/SignUp.css'
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { SignUpApi, LoginApi} from '../utils/SignUpLogin.js';
 import useSignIn from 'react-auth-kit/hooks/useSignIn';
 
@@ -39,7 +39,7 @@ export default function Login(){
     const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
 
     const signIn = useSignIn();
-
+    const navigate = useNavigate();
 
     const toSingUp = () =>{
         if(action==="Sign Up"){
@@ -110,6 +110,7 @@ export default function Login(){
                     tokenType: "Bearer",
                     authState: {email: data.user.email},
                 });
+                navigate('profile')
             };
         }
         else{
@@ -165,6 +166,7 @@ export default function Login(){
                     tokenType: "Bearer",
                     authState: {email: data.email},
                 });
+                navigate('profile')
             };
         }
         else{
