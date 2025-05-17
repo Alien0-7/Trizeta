@@ -25,7 +25,7 @@ public class DatabaseController {
 
     public static void initDatabase() {
 
-        File configFile = new File("config.properties");
+        File configFile = new File("src/main/resources/config.properties");
         Properties properties = new Properties();
 
         if (!configFile.exists()) {
