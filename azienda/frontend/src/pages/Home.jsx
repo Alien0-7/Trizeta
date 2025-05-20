@@ -65,6 +65,37 @@ export default function Home() {
   </div>
 </div>
 
+<footer className="site-footer">
+  <div className="footer-content">
+    <div className="footer-brand">
+      <h2>Trizeta Domotica</h2>
+      <p>Soluzioni smart per la casa del futuro</p>
+    </div>
+
+    <div className="footer-links">
+      <h4>Link utili</h4>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Chi Siamo</a></li>
+        <li><a href="#">Servizi</a></li>
+        <li><a href="#">Contatti</a></li>
+      </ul>
+    </div>
+
+    <div className="footer-contact">
+      <h4>Contatti</h4>
+      <p>Email: info@trizeta.it</p>
+      <p>Tel: +39 0123 456789</p>
+      <p>Via Esempio 123, Roma</p>
+    </div>
+  </div>
+
+  <div className="footer-bottom">
+    <p>© {new Date().getFullYear()} Trizeta Domotica. Tutti i diritti riservati.</p>
+  </div>
+</footer>
+
+
 
     </>
   );
