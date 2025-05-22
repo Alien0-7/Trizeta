@@ -16,7 +16,7 @@ export default function Settings(){
     
     return(
         <>
-        <div className="LOGOUT" onClick={logout}>Sign up</div>
+        <div className="LOGOUT" onClick={logout}>LOGOUT</div>
         </>
     )
 }

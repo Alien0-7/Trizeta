@@ -2,6 +2,7 @@ import '../styles/SignUp.css'
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { SignUpApi, LoginApi} from '../utils/SignUpLogin.js';
+import { Eye, EyeOff } from 'lucide-react';
 import useSignIn from 'react-auth-kit/hooks/useSignIn';
 
 export default function Login(){
@@ -240,7 +241,7 @@ export default function Login(){
                     </div>
                     {email_error && <div className="error">{email_error}</div>}
                     <div className='input'>
-                        <input type='password' value = {password} onChange={handlePassword} placeholder='Password'autocomplete="new-password"/>
+                        <input type='password' value = {password} onChange={handlePassword} placeholder='Password'/>
                     </div>
                     {password_error && <div className="error">{password_error}</div>}
                     {return_error && <div className="error">{return_error}</div>}
