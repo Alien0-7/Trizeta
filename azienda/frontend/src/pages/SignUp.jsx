@@ -5,6 +5,7 @@ import { SignUpApi, LoginApi} from '../utils/SignUpLogin.js';
 import { Eye, EyeOff } from 'lucide-react';
 import useSignIn from 'react-auth-kit/hooks/useSignIn';
 
+
 export default function Login(){
 
     const[action,setAction] = useState("Login");
@@ -12,6 +13,10 @@ export default function Login(){
     const[email,setEmail] = useState('');
 
     const[password,setPassword] = useState('');
+
+    const[showPassword,setShowPassword] = useState(false);
+
+    const[showControl,setShowControl] = useState(false);
 
     const[control_password,setControl_Password] = useState('');
     
@@ -37,10 +42,57 @@ export default function Login(){
 
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d?!@#$%^&*]{8,}$/;
 
-    const signIn = useSignIn();
+    
     const navigate = useNavigate();
+    const signIn = useSignIn();
+
+    const handleSignUp = async () => {
+        try {
+            const data = await SignUpApi(email, password, control_password, name, surname, address);
+            if (data){
+                console.log("Login effettuato:", data);
+                signIn({
+                    token: data.authorization_bearer,
+                    expiresIn: 259200,
+                    tokenType: "Bearer",
+                    authState: {},
+                });
+                navigate('/profile');
+            }
+        } catch (error) {
+            if (error.response === 400) {
+            setPassword_Error("Errore nei dati di registrazione");
+            } else{
+                if (!error.response === 200)
+                    setPassword_Error("Errore imprevisto");
+            }
+        }
+    };
+
+    const handleLogin = async () => {
+        try {
+            const data = await LoginApi(email, password);
+            if (data){
+                console.log("Login effettuato:", data);
+                signIn({
+                    token: data.authorization_bearer,
+                    expiresIn: 259200,
+                    tokenType: "Bearer",
+                    authState: {},
+                });
+                navigate('/profile');
+            }
+        } catch (error) {
+            if (error.response === 400) {
+            setPassword_Error('Mail o Password errati');
+            } else {
+            if (!error.response === 200)
+                    setPassword_Error("Errore imprevisto");
+            }
+        }
+    };
 
     const toSingUp = () =>{
         if(action==="Sign Up"){
@@ -104,19 +156,7 @@ export default function Login(){
                 setAddress_Error('');
             }
             if(control===false){
-                const data = SignUpApi(email,password,control_password,name,surname,address);
-                if (!data || !data.token || !data.email) {
-                    throw new Error("Dati incompleti ricevuti dal server");
-                }
-                else{
-                    signIn({
-                        token: data.token,
-                        expireIn: 259200,
-                        tokenType: "Bearer",
-                        authState: {email: data.email},
-                    });
-                    navigate('profile')
-                }
+                handleSignUp();
             };
         }
         else{
@@ -133,10 +173,11 @@ export default function Login(){
             setSurname_Error('');
             setAddress_Error('');
             setReturn_Error('');
+            setShowPassword(false);
         };
     };
     
-
+    
     const toLogin = () =>{
         if(action==="Login"){
             let control = false;
@@ -165,19 +206,7 @@ export default function Login(){
                     setPassword_Error('');
             };
             if(control === false){
-                const data = LoginApi(email,password);
-                if (!data || !data.token || !data.email) {
-                    throw new Error("Dati incompleti ricevuti dal server");
-                }
-                else{
-                    signIn({
-                        token: data.token,
-                        expireIn: 259200,
-                        tokenType: "Bearer",
-                        authState: {email: data.email},
-                    });
-                    navigate('profile')
-                }
+                handleLogin();
             };
         }
         else{
@@ -191,6 +220,8 @@ export default function Login(){
             setName_Error('');
             setSurname_Error('');
             setAddress_Error('');
+            setShowPassword(false);
+            setShowControl(false);
         };
     };
     
@@ -201,6 +232,8 @@ export default function Login(){
     const handlePassword = (e) =>{
         setPassword(e.target.value);
     };
+    const toggleShowPassword = () =>setShowPassword(prev=> !prev);
+    const toggleShowConfirm = () =>setShowControl(prevC=> !prevC);
     const handleControl_Password = (e) =>{
         setControl_Password(e.target.value);
     };
@@ -241,14 +274,20 @@ export default function Login(){
                     </div>
                     {email_error && <div className="error">{email_error}</div>}
                     <div className='input'>
-                        <input type='password' value = {password} onChange={handlePassword} placeholder='Password'/>
+                        <input type={showPassword?'text':'password'} value = {password} onChange={handlePassword} placeholder='Password' autoComplete="current-password" className="password-input"/>
+                        <div className="toggle-password" onClick={toggleShowPassword}>
+                            {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                        </div>
                     </div>
                     {password_error && <div className="error">{password_error}</div>}
                     {return_error && <div className="error">{return_error}</div>}
                     {action==="Sign Up"&&
                     <>
                     <div className='input'>
-                        <input type='password' value = {control_password} onChange={handleControl_Password} placeholder='Confirm Password'/>
+                        <input type={showControl?'text':'password'} value = {control_password} onChange={handleControl_Password} placeholder='Confirm Password' className="password-input"/>
+                        <div className="toggle-password" onClick={toggleShowConfirm}>
+                            {showControl ? <Eye size={20} /> : <EyeOff size={20} />}
+                        </div>
                     </div>
                     {confirm_error && <div className="error">{confirm_error}</div>}
                     <div className='input'>
