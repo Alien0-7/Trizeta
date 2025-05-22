@@ -7,7 +7,10 @@ import org.example.Controller.ArduinoController;
 import org.example.Controller.BuildController;
 import org.example.Controller.DatabaseController;
 import org.example.Controller.UserController;
+import org.example.Utils.UUIDUtils;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
 
@@ -20,12 +23,15 @@ public class Application {
                 //https://javalin.io/documentation#handler-groups
                 javalinConfig -> javalinConfig.router.apiBuilder(() -> {
                     path("/api", () -> {
-                        post(Application::prova);
+                        post(Application::ping);
                         post("/register", UserController::registerUser);
                         post("/login", UserController::loginUser);
                         post("/temperature", BuildController::getTemperature);
+                        post("/umidity", BuildController::getUmidity);
+                        post("/co2", BuildController::getCO2);
 
                         path("/arduino", () -> {
+                            post("/ping",ArduinoController::ping);
                             post("/register", ArduinoController::registerArduino);
                             post("/add", ArduinoController::addData);
 
@@ -42,7 +48,7 @@ public class Application {
 
     }
 
-    public static void prova(@NotNull Context ctx) {
+    public static void ping(@NotNull Context ctx) {
         ctx.status(200);
     }
 

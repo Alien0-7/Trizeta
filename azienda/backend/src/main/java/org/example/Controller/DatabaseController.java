@@ -10,18 +10,33 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
+import java.util.UUID;
 
 
 public class DatabaseController {
     private static final Logger log = LoggerFactory.getLogger(DatabaseController.class);
-    private static String DBUser, DBPassword, url, table, columnPassword, columnEmail, columnUUID, columnName, columnSurname, columnAddress;
+    private static String DBUser;
+    private static String DBPassword;
+    private static String url;
+    private static String table_user;
+    private static String table_room;
+    private static String table_measurement;
+    private static String table_actuator;
+    private static String columnPassword;
+    private static String columnEmail;
+    private static String columnUUID;
+    private static String columnName;
+    private static String columnSurname;
+    private static String columnAddress;
+    private static String issuer;
+    private static String error;
 
     public static void initDatabase() {
 
@@ -32,13 +47,17 @@ public class DatabaseController {
             properties.setProperty("user","");
             properties.setProperty("password","");
             properties.setProperty("url","");
-            properties.setProperty("table","");
+            properties.setProperty("table_user","");
+            properties.setProperty("table_room","");
+            properties.setProperty("table_measurement","");
+            properties.setProperty("table_actuator","");
             properties.setProperty("columnPassword","");
             properties.setProperty("columnEmail","");
             properties.setProperty("columnUUID","");
             properties.setProperty("columnName","");
             properties.setProperty("columnSurname","");
             properties.setProperty("columnAddress","");
+            properties.setProperty("issuer","");
 
             try {
                 FileOutputStream fos = new FileOutputStream(configFile);
@@ -55,13 +74,17 @@ public class DatabaseController {
                 DBUser = properties.getProperty("user");
                 DBPassword = properties.getProperty("password");
                 url = properties.getProperty("url");
-                table = properties.getProperty("table");
+                table_user = properties.getProperty("table_user");
+                table_room = properties.getProperty("table_room");
+                table_measurement = properties.getProperty("table_measurement");
+                table_actuator = properties.getProperty("table_actuator");
                 columnPassword = properties.getProperty("columnPassword");
                 columnEmail = properties.getProperty("columnEmail");
                 columnUUID = properties.getProperty("columnUUID");
                 columnName = properties.getProperty("columnName");
                 columnSurname = properties.getProperty("columnSurname");
                 columnAddress = properties.getProperty("columnAddress");
+                issuer = properties.getProperty("issuer");
 
             } catch (Exception ignored) {}
         }
@@ -90,7 +113,7 @@ public class DatabaseController {
             Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
             log.info("Connesso con il DataBase");
             Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("Select * from "+table+";");
+            ResultSet rs = stmt.executeQuery("Select * from "+table_user+";");
 
             while (rs.next()) {
 
@@ -98,6 +121,7 @@ public class DatabaseController {
 
                 if (user.getEmail().equals(email2)) {
 
+                    error = "Email already existed";
                     return false;
 
                 }
@@ -106,11 +130,12 @@ public class DatabaseController {
 
             if(user.getName().equalsIgnoreCase("") || user.getName() == null || user.getSurname().equalsIgnoreCase("") || user.getSurname() == null || user.getAddress().equalsIgnoreCase("") || user.getAddress() == null){
 
+                error = "invalid value";
                 return false;
 
             }
 
-            int rows = stmt.executeUpdate("insert into "+table+"("+columnUUID+", " +columnEmail+", "+columnPassword+" , "+columnName+", "+columnSurname+", "+columnAddress+") " +
+            int rows = stmt.executeUpdate("insert into "+table_user+"("+columnUUID+", " +columnEmail+", "+columnPassword+" , "+columnName+", "+columnSurname+", "+columnAddress+") " +
                     "values('"+ UUIDUtils.uuidToBytes(user.getUUID()) +"', '"+user.getEmail()+"', '"+hashPassword(user.getPassword())+"', '"+user.getName()+"', '"+user.getSurname()+"', '"+user.getAddress()+"');");
 
             if (rows > 0) {
@@ -148,7 +173,7 @@ public class DatabaseController {
             Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
             log.info("Connesso con il DataBase");
             Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("Select * from "+table+";");
+            ResultSet rs = stmt.executeQuery("Select * from "+table_user+";");
 
             while (rs.next()) {
                 String currentEmail = rs.getString(columnEmail);
@@ -180,6 +205,97 @@ public class DatabaseController {
         }
 
         return null;
+    }
+
+    public static ArrayList date(String typee, String userEmail) {
+        try {
+            Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
+            log.info("Connesso con il DataBase");
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("Select * from "+table_user+";");
+            boolean found = false;
+            ArrayList<Double> values = new ArrayList<>();
+
+            while (rs.next()) {
+
+                String currentEmail = rs.getString(columnEmail);
+                if(userEmail.equals(currentEmail)) {
+
+                    found = true;
+                    log.info("Utente trovato");
+                }
+
+            }
+
+            if(found){
+                rs = stmt.executeQuery("Select * from "+table_measurement+";");
+
+                while (rs.next()) {
+                    String type = rs.getString("type");
+                    double value = rs.getDouble("value");
+
+                    if(type.equalsIgnoreCase(typee)){
+
+                        values.add(value);
+
+                    }
+
+                }
+
+                rs.close();
+                stmt.close();
+                connection.close();
+                log.info("Connessione chiusa con successo, Trasferimento effettuato");
+                return values;
+
+            }else{
+
+                rs.close();
+                stmt.close();
+                connection.close();
+                log.info("Connessione chiusa con successo, Utente non trovato");
+
+            }
+
+        } catch (SQLException e) {
+
+            log.error("Connessione fallita" + e.getMessage());
+
+        }
+        return null;
+    }
+
+    public static Boolean uuidExists(String uuid) {
+
+        try {
+            Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
+            log.info("Connesso con il DataBase");
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("Select * from "+table_user+";");
+
+            while (rs.next()) {
+
+                String uuid2 = UUIDUtils.bytesToUUID(rs.getBytes(columnUUID)).toString();
+
+                if (uuid.equals(uuid2)) {
+
+                    return true;
+
+                }
+
+            }
+
+            rs.close();
+            stmt.close();
+            connection.close();
+
+            log.info("Connessione chiusa con successo");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
+        }
+
+        return false;
     }
 
     private static String hashPassword(String password) {
@@ -226,7 +342,11 @@ public class DatabaseController {
         return DBPassword;
     }
 
-    public static String getTable() {
-        return table;
+    public static String getIssuer() {
+        return issuer;
+    }
+
+    public static String getError() {
+        return error;
     }
 }

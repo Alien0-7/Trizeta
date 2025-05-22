@@ -21,4 +21,24 @@ public class ArduinoController {
 
     }
 
+    public static void ping(@NotNull Context ctx) {
+        String uuid = ctx.formParam("uuid");
+        boolean isuuid = DatabaseController.uuidExists(uuid);
+        if(isuuid){
+
+            ctx.status(200);
+            ctx.json(Map.of("uuid", "uuid valido"));
+
+        } else if (!isuuid) {
+
+            ctx.status(400);
+            ctx.json(Map.of("uuid", "uuid non valido"));
+
+        }else{
+
+            ctx.status(500);
+
+        }
+    }
+
 }

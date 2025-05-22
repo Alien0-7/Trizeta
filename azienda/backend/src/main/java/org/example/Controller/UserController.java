@@ -10,6 +10,9 @@ import org.example.Utils.PasswordValidator;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.JWTVerifier;
 
 import java.sql.*;
 import java.util.Date;
@@ -47,20 +50,23 @@ public class UserController {
                 ctx.status(200);
             } else {
                 ctx.status(400);
+                ctx.json(Map.of("Error", DatabaseController.getError()));
             }
 
         } else {
             ctx.status(400);
+            ctx.json(Map.of("Error", "Invalid parameters"));
         }
 
     }
 
     public static void loginUser(@NotNull Context ctx) {
         User user = DatabaseController.searchUser(ctx.formParam("email"), ctx.formParam("password"));
+        String ISSUER = DatabaseController.getIssuer();
         if (user != null) {
             Algorithm algorithm = Algorithm.HMAC256("passwordSicuraSegreta");
             String jwtToken = JWT.create()
-                    .withIssuer(user.getUUID().toString())
+                    .withIssuer(ISSUER)
                     .withClaim("email", user.getEmail())
                     .withClaim("password", user.getPassword())
                     .withIssuedAt(new Date())
@@ -74,4 +80,6 @@ public class UserController {
         }
 
     }
+
+
 }

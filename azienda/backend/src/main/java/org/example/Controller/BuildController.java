@@ -3,31 +3,112 @@ package org.example.Controller;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 
 public class BuildController {
 
     public static void getTemperature(@NotNull Context ctx) {
-        Algorithm algorithm = Algorithm.HMAC256("passwordSicuraSegreta");
-        JWTVerifier verifier = JWT.require(algorithm)
-                .withIssuer("passwordSicuraSegreta")
-                .build();
 
-        String jwtToken = ctx.formParam("JWT");
-        System.out.println(jwtToken);
+        String type = "T";
+        String SECRET_KEY = "passwordSicuraSegreta";
+        String ISSUER = DatabaseController.getIssuer();
+
+        String token = ctx.formParam("token");
+
         try {
-            DecodedJWT decodedJWT = verifier.verify(jwtToken);
+
+            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
+
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer(ISSUER)
+                    .build();
+
+            DecodedJWT jwt = verifier.verify(token);
+
+            ArrayList temperature = DatabaseController.date(type, jwt.getClaim("email").asString());
+
             ctx.status(200);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+            ctx.json(Map.of("temperaturte", temperature));
+
+        } catch (JWTVerificationException e) {
+
             ctx.status(400);
+            ctx.json(Map.of("Error", "Token JWT invalido"));
+
         }
 
+    }
+
+    public static void getUmidity(@NotNull Context ctx) {
+
+        String type = "U";
+        String SECRET_KEY = "passwordSicuraSegreta";
+        String ISSUER = DatabaseController.getIssuer();
+
+        String token = ctx.formParam("token");
+
+        try {
+
+            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
+
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer(ISSUER)
+                    .build();
+
+            DecodedJWT jwt = verifier.verify(token);
+
+            ArrayList umidity = DatabaseController.date(type, jwt.getClaim("email").asString());
+
+            ctx.status(200);
+            ctx.json(Map.of("umidity", umidity));
+
+        } catch (JWTVerificationException e) {
+
+            ctx.status(400);
+            ctx.json(Map.of("Error", "Token JWT invalido"));
+
+        }
 
     }
+
+    public static void getCO2(@NotNull Context ctx) {
+
+        String type = "C";
+        String SECRET_KEY = "passwordSicuraSegreta";
+        String ISSUER = DatabaseController.getIssuer();
+
+        String token = ctx.formParam("token");
+
+        try {
+
+            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
+
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer(ISSUER)
+                    .build();
+
+            DecodedJWT jwt = verifier.verify(token);
+
+            ArrayList co2 = DatabaseController.date(type, jwt.getClaim("email").asString());
+
+            ctx.status(200);
+            ctx.json(Map.of("temperaturte", co2));
+
+        } catch (JWTVerificationException e) {
+
+            ctx.status(400);
+            ctx.json(Map.of("Error", "Token JWT invalido"));
+
+        }
+
+    }
+
 
 }
