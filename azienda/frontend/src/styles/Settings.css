@@ -1,0 +1,18 @@
+.LOGOUT {
+    padding: 10px 20px;
+    background-color: white;
+    color: red;
+    border: 2px solid red;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    width: fit-content;
+    margin: 2rem auto;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.LOGOUT:hover {
+    background-color: red;
+    color: white;
+}
