@@ -4,7 +4,6 @@ import '../styles/Profile.css';
 import { useNavigate } from 'react-router-dom';
 
 export default function Settings() {
-
     const signOut = useSignOut();
     const navigate = useNavigate();
 
@@ -18,7 +17,7 @@ export default function Settings() {
 
     return (
         <>
-            <div className="LOGOUT" onClick={logout}>LOGOUT</div>
+            <div className="submit logout-button" onClick={logout}>LOGOUT</div>
         </>
-    )
+    );
 }

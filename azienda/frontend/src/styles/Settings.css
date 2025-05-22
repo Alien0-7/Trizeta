@@ -16,3 +16,15 @@
     background-color: red;
     color: white;
 }
+
+.logout-button {
+    background-color: white !important;
+    color: red !important;
+    border: 2px solid red;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: red !important;
+    color: white !important;
+}
