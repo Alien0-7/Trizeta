@@ -10,11 +10,7 @@ import org.example.Utils.PasswordValidator;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.auth0.jwt.JWTVerifier;
 
-import java.sql.*;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
@@ -32,7 +28,6 @@ public class UserController {
         String address = ctx.formParam("address");
 
 
-        //TODO fix validators for numbers (email validator) and for special characters (password validator)
         if (EmailValidator.isValidEmail(email1) && PasswordValidator.isValidPassword(pass1) && PasswordValidator.isValidPassword(pass2)) {
 
             if(!pass1.equals(pass2)) {
@@ -67,8 +62,7 @@ public class UserController {
             Algorithm algorithm = Algorithm.HMAC256("passwordSicuraSegreta");
             String jwtToken = JWT.create()
                     .withIssuer(ISSUER)
-                    .withClaim("email", user.getEmail())
-                    .withClaim("password", user.getPassword())
+                    .withClaim("uuid", user.getUUID().toString())
                     .withIssuedAt(new Date())
                     .withExpiresAt(new Date(System.currentTimeMillis() + 12*60*60*1000L))
                     .sign(algorithm);

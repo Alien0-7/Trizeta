@@ -6,10 +6,10 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.javalin.http.Context;
+import org.example.Utils.Measurement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Map;
 
 public class BuildController {
@@ -21,6 +21,7 @@ public class BuildController {
         String ISSUER = DatabaseController.getIssuer();
 
         String token = ctx.formParam("token");
+        String fromDate = ctx.formParam("fromDate");
 
         try {
 
@@ -32,10 +33,10 @@ public class BuildController {
 
             DecodedJWT jwt = verifier.verify(token);
 
-            ArrayList temperature = DatabaseController.date(type, jwt.getClaim("email").asString());
+            ArrayList<Measurement> temperature = DatabaseController.getUserMeasurements(type, jwt.getClaim("uuid").asString(), fromDate);
 
             ctx.status(200);
-            ctx.json(Map.of("temperaturte", temperature));
+            ctx.json(Map.of("temperature", temperature));
 
         } catch (JWTVerificationException e) {
 
@@ -46,13 +47,14 @@ public class BuildController {
 
     }
 
-    public static void getUmidity(@NotNull Context ctx) {
+    public static void getHumidity(@NotNull Context ctx) {
 
-        String type = "U";
+        String type = "H";
         String SECRET_KEY = "passwordSicuraSegreta";
         String ISSUER = DatabaseController.getIssuer();
 
         String token = ctx.formParam("token");
+        String fromDate = ctx.formParam("fromDate");
 
         try {
 
@@ -64,10 +66,10 @@ public class BuildController {
 
             DecodedJWT jwt = verifier.verify(token);
 
-            ArrayList umidity = DatabaseController.date(type, jwt.getClaim("email").asString());
+            ArrayList<Measurement> humidity = DatabaseController.getUserMeasurements(type, jwt.getClaim("uuid").asString(), fromDate);
 
             ctx.status(200);
-            ctx.json(Map.of("umidity", umidity));
+            ctx.json(Map.of("humidity", humidity));
 
         } catch (JWTVerificationException e) {
 
@@ -85,6 +87,7 @@ public class BuildController {
         String ISSUER = DatabaseController.getIssuer();
 
         String token = ctx.formParam("token");
+        String fromDate = ctx.formParam("fromDate");
 
         try {
 
@@ -96,10 +99,10 @@ public class BuildController {
 
             DecodedJWT jwt = verifier.verify(token);
 
-            ArrayList co2 = DatabaseController.date(type, jwt.getClaim("email").asString());
+            ArrayList<Measurement> co2 = DatabaseController.getUserMeasurements(type, jwt.getClaim("uuid").asString(), fromDate);
 
             ctx.status(200);
-            ctx.json(Map.of("temperaturte", co2));
+            ctx.json(Map.of("Co2", co2));
 
         } catch (JWTVerificationException e) {
 

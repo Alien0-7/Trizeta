@@ -65,9 +65,9 @@ public class ArduinoController {
 
     public static void addArduino(@NotNull Context ctx) {
         ctx.status(501);
-        return;
+
         /*
-        String email = "", password = "";
+        String uuid = "";
 
         try {
             String SECRET_KEY = "passwordSicuraSegreta";
@@ -81,12 +81,12 @@ public class ArduinoController {
                     .build();
 
             DecodedJWT jwt = verifier.verify(token);
-            email = jwt.getClaim("email").asString();
-            password = jwt.getClaim("password").asString();
+            uuid = jwt.getClaim("uuid").asString();
 
         } catch (Exception e) {}
 
-        DatabaseController.searchUser(email, password);
+
+
          */
     }
 }

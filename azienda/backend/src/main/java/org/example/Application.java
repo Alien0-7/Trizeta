@@ -3,14 +3,8 @@ package org.example;
 
 import io.javalin.Javalin;
 import io.javalin.http.Context;
-import org.example.Controller.ArduinoController;
-import org.example.Controller.BuildController;
-import org.example.Controller.DatabaseController;
-import org.example.Controller.UserController;
-import org.example.Utils.UUIDUtils;
+import org.example.Controller.*;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
 
@@ -20,14 +14,13 @@ public class Application {
 
         DatabaseController.initDatabase();
         Javalin app = Javalin.create(
-                //https://javalin.io/documentation#handler-groups
                 javalinConfig -> javalinConfig.router.apiBuilder(() -> {
                     path("/api", () -> {
                         post(Application::ping);
                         post("/register", UserController::registerUser);
                         post("/login", UserController::loginUser);
                         post("/temperature", BuildController::getTemperature);
-                        post("/umidity", BuildController::getUmidity);
+                        post("/humidity", BuildController::getHumidity);
                         post("/co2", BuildController::getCO2);
 
                         path("/arduino", () -> {
@@ -35,6 +28,10 @@ public class Application {
                             post("/register", ArduinoController::registerArduino);
                             post("/add", ArduinoController::addData);
                             post("/generate", ArduinoController::addArduino);
+
+                        });
+                        path("/ai", () -> {
+                            post("/predict", AIController::predictor);
 
                         });
                     });

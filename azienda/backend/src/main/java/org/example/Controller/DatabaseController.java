@@ -2,6 +2,7 @@ package org.example.Controller;
 
 
 import org.example.User;
+import org.example.Utils.Measurement;
 import org.example.Utils.UUIDUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,12 +108,7 @@ public class DatabaseController {
 
         }
 
-        // TODO (optional) if table doesn't exists create it
-
     }
-    // TODO Connect getDataRequests() to a real "requests" table in the database
-    // TODO Handle SQL exceptions more specifically and return *meaningful* error messages
-    // TODO Sanitize and validate input data to ensure safety, even with prepared statements
 
     public static Boolean addUser(User user) {
 
@@ -286,19 +282,19 @@ public class DatabaseController {
         return null;
     }
 
-    public static ArrayList date(String typee, String userEmail) {
+    public static ArrayList<Measurement> getUserMeasurements(String typeGiven, String userUUID, String fromDate) {
         try {
             Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
             log.info("Connesso con il DataBase");
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("Select * from "+table_user+";");
             boolean found = false;
-            ArrayList<Double> values = new ArrayList<>();
+            ArrayList<Measurement> measurements = new ArrayList<>();
 
             while (rs.next()) {
 
-                String currentEmail = rs.getString(columnEmail);
-                if(userEmail.equals(currentEmail)) {
+                String currentUUID = rs.getString(columnUUID);
+                if(userUUID.equals(currentUUID)) {
 
                     found = true;
                     log.info("Utente trovato");
@@ -312,10 +308,11 @@ public class DatabaseController {
                 while (rs.next()) {
                     String type = rs.getString("type");
                     double value = rs.getDouble("value");
+                    String timestamp = rs.getString("timestamp");
 
-                    if(type.equalsIgnoreCase(typee)){
+                    if(type.equalsIgnoreCase(typeGiven)){
 
-                        values.add(value);
+                        measurements.add(new Measurement(timestamp, (float) value));
 
                     }
 
@@ -325,7 +322,7 @@ public class DatabaseController {
                 stmt.close();
                 connection.close();
                 log.info("Connessione chiusa con successo, Trasferimento effettuato");
-                return values;
+                return measurements;
 
             }else{
 
