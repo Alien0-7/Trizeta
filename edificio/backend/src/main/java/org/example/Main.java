@@ -1,8 +1,7 @@
 package org.example;
 
 import com.fazecast.jSerialComm.*;
-import kong.unirest.HttpResponse;
-import kong.unirest.Unirest;
+import okhttp3.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -88,17 +87,32 @@ public class Main {
     }
 
     private static boolean ping(String UUID_user) {
-        HttpResponse<String> response = Unirest.post("http://trizeta.duckdns.org:10001/api/arduino/ping")
-                .field("uuid", UUID_user)
-                .asString();
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("uuid", UUID_user)
+                .build();
 
-        if (response.getStatus() == 200) {
-            UUID = UUID_user;
-            return true;
+        // Richiesta HTTP
+        Request request = new Request.Builder()
+                .url("http://trizeta.duckdns.org:10001/api/arduino/ping")  // Cambia URL
+                .post(requestBody)
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            if (response.code() == 200) {
+                UUID = UUID_user;
+                return true;
+            } else {
+                System.out.println("Il token inserito è sbagliato!");
+                return false;
+            }
+
+        } catch (Exception e) {
+            System.out.println("Il token inserito è sbagliato!");
+            return false;
         }
-
-        System.out.println("Il token inserito è sbagliato!");
-        return false;
     }
 
     private static boolean initSerialPort() {

@@ -1,8 +1,7 @@
 package org.example;
 
 import com.fazecast.jSerialComm.SerialPort;
-import kong.unirest.HttpResponse;
-import kong.unirest.Unirest;
+import okhttp3.*;
 
 public class SensorDataUploader extends Thread {
     SerialPort comPort;
@@ -46,15 +45,38 @@ public class SensorDataUploader extends Thread {
 
 
     public void saveMisure(String str) {
-        System.out.println(str.split(";")[0] +" , " + str.split(";")[1]);
+        String type = "";
+        switch (str.split(";")[0]) {
+            case "getTemperature":
+                type = "T";
+                break;
+            case "getHumidity":
+                type = "H";
+                break;
+            case "getCo2":
+                type = "C";
+                break;
+        }
 
-        HttpResponse<String> response = Unirest.post("http://trizeta.duckdns.org:10001/api/arduino/add")
-                .field("uuid", UUID)
-                .field(str.split(";")[0], str.split(";")[1])
-                .asString();
+        OkHttpClient client = new OkHttpClient();
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("uuid", UUID)
+                .addFormDataPart("data_type", type)
+                .addFormDataPart("value", str.split(";")[1])
+                .addFormDataPart("room", "bagno")
+                .build();
 
-        System.out.println("Status: " + response.getStatus());
-        if (response.getStatus() != 200)
-            exit = true;
+        // Richiesta HTTP
+        Request request = new Request.Builder()
+                .url("http://127.0.0.1:7070/api/arduino/add")  // Cambia URL
+                .post(requestBody)
+                .build();
+
+        try {
+            Response response = client.newCall(request).execute();
+            response.close();
+
+        } catch (Exception e) {}
     }
 }
