@@ -34,6 +34,7 @@ public class Application {
                             post("/ping",ArduinoController::ping);
                             post("/register", ArduinoController::registerArduino);
                             post("/add", ArduinoController::addData);
+                            post("/generate", ArduinoController::addArduino);
 
                         });
                     });

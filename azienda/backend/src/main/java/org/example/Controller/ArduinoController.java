@@ -1,8 +1,13 @@
 package org.example.Controller;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 
@@ -39,13 +44,13 @@ public class ArduinoController {
 
     public static void ping(@NotNull Context ctx) {
         String uuid = ctx.formParam("uuid");
-        boolean isuuid = DatabaseController.uuidExists(uuid);
+        boolean uuidExists = DatabaseController.uuidExists(uuid);
 
-        if(isuuid){
+        if(uuidExists){
 
             ctx.status(200);
 
-        } else if (!isuuid) {
+        } else if (!uuidExists) {
 
             ctx.status(400);
 
@@ -56,4 +61,30 @@ public class ArduinoController {
         }
     }
 
+    public static void addArduino(@NotNull Context ctx) {
+        ctx.status(501);
+        return;
+        /*
+        String email = "", password = "";
+
+        try {
+            String SECRET_KEY = "passwordSicuraSegreta";
+            String ISSUER = DatabaseController.getIssuer();
+            String token = ctx.formParam("token");
+
+            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
+
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer(ISSUER)
+                    .build();
+
+            DecodedJWT jwt = verifier.verify(token);
+            email = jwt.getClaim("email").asString();
+            password = jwt.getClaim("password").asString();
+
+        } catch (Exception e) {}
+
+        DatabaseController.searchUser(email, password);
+         */
+    }
 }
