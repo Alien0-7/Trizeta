@@ -1,33 +1,49 @@
 import '../styles/Settings.css';
-import '../styles/Profile.css';
 import useSignOut from 'react-auth-kit/hooks/useSignOut';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 export default function Settings() {
-
     const signOut = useSignOut();
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
 
-    const handleLogoutClick = () => {
-        setShowModal(true);
+    const user = {
+        email: 'user@example.com',
+        password: '********',
+        name: 'Mario',
+        surname: 'Rossi',
+        address: 'Via Roma 123, Milano'
     };
 
+    const handleLogoutClick = () => setShowModal(true);
     const confirmLogout = () => {
         setShowModal(false);
         signOut();
         navigate("/");
         window.location.reload();
     };
-
-    const cancelLogout = () => {
-        setShowModal(false);
-    };
+    const cancelLogout = () => setShowModal(false);
 
     return (
         <>
-            <div className="submit logout-button" onClick={handleLogoutClick}>LOGOUT</div>
+            <div className="container">
+                <div className="header">
+                    <h1 className="text">Impostazioni Utente</h1>
+                    <div className="underline"></div>
+                </div>
+                <div className="inputs">
+                    <div className="input"><strong>Nome:</strong> {user.name}</div>
+                    <div className="input"><strong>Cognome:</strong> {user.surname}</div>
+                    <div className="input"><strong>Email:</strong> {user.email}</div>
+                    <div className="input"><strong>Password:</strong> {user.password}</div>
+                    <div className="input"><strong>Indirizzo:</strong> {user.address}</div>
+                </div>
+
+                <div className="submit-container">
+                    <div className="submit logout-button" onClick={handleLogoutClick}>LOGOUT</div>
+                </div>
+            </div>
 
             {showModal && (
                 <div className="modal-overlay">
