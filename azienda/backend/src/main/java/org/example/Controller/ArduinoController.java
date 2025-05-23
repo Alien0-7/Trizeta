@@ -8,9 +8,25 @@ import java.util.UUID;
 
 public class ArduinoController {
     public static void addData(Context ctx) {
-        String uuid = ctx.formParam("uuid");
 
-        System.out.println(ctx.body());
+        String uuid = ctx.formParam("uuid");
+        String data = ctx.formParam("data_type");
+        String rooom = ctx.formParam("room");
+        double value = Double.parseDouble(ctx.formParam("value"));
+
+        if(data.equalsIgnoreCase("T")){
+
+
+
+        } else if (data.equalsIgnoreCase("C")) {
+
+
+
+        }else{
+
+
+
+        }
 
     }
 
@@ -24,15 +40,14 @@ public class ArduinoController {
     public static void ping(@NotNull Context ctx) {
         String uuid = ctx.formParam("uuid");
         boolean isuuid = DatabaseController.uuidExists(uuid);
+
         if(isuuid){
 
             ctx.status(200);
-            ctx.json(Map.of("uuid", "uuid valido"));
 
         } else if (!isuuid) {
 
             ctx.status(400);
-            ctx.json(Map.of("uuid", "uuid non valido"));
 
         }else{
 
