@@ -2,10 +2,9 @@ package org.example;
 
 
 import io.javalin.Javalin;
-import org.example.Controller.ArduinoController;
-import org.example.Controller.BuildController;
-import org.example.Controller.DatabaseController;
-import org.example.Controller.UserController;
+import io.javalin.http.Context;
+import org.example.Controller.*;
+import org.jetbrains.annotations.NotNull;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
 
@@ -15,16 +14,24 @@ public class Application {
 
         DatabaseController.initDatabase();
         Javalin app = Javalin.create(
-                //https://javalin.io/documentation#handler-groups
                 javalinConfig -> javalinConfig.router.apiBuilder(() -> {
                     path("/api", () -> {
+                        post(Application::ping);
                         post("/register", UserController::registerUser);
                         post("/login", UserController::loginUser);
                         post("/temperature", BuildController::getTemperature);
+                        post("/humidity", BuildController::getHumidity);
+                        post("/co2", BuildController::getCO2);
 
                         path("/arduino", () -> {
+                            post("/ping",ArduinoController::ping);
                             post("/register", ArduinoController::registerArduino);
                             post("/add", ArduinoController::addData);
+                            post("/generate", ArduinoController::addArduino);
+
+                        });
+                        path("/ai", () -> {
+                            post("/predict", AIController::predictor);
 
                         });
                     });
@@ -39,5 +46,8 @@ public class Application {
 
     }
 
+    public static void ping(@NotNull Context ctx) {
+        ctx.status(200);
+    }
 
 }

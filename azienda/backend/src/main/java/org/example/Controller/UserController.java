@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
@@ -29,7 +28,6 @@ public class UserController {
         String address = ctx.formParam("address");
 
 
-        //TODO fix validators for numbers (email validator) and for special characters (password validator)
         if (EmailValidator.isValidEmail(email1) && PasswordValidator.isValidPassword(pass1) && PasswordValidator.isValidPassword(pass2)) {
 
             if(!pass1.equals(pass2)) {
@@ -60,12 +58,12 @@ public class UserController {
 
     public static void loginUser(@NotNull Context ctx) {
         User user = DatabaseController.searchUser(ctx.formParam("email"), ctx.formParam("password"));
+        String ISSUER = DatabaseController.getIssuer();
         if (user != null) {
             Algorithm algorithm = Algorithm.HMAC256("passwordSicuraSegreta");
             String jwtToken = JWT.create()
-                    .withIssuer(user.getUUID().toString())
-                    .withClaim("email", user.getEmail())
-                    .withClaim("password", user.getPassword())
+                    .withIssuer(ISSUER)
+                    .withClaim("uuid", user.getUUID().toString())
                     .withIssuedAt(new Date())
                     .withExpiresAt(new Date(System.currentTimeMillis() + 12*60*60*1000L))
                     .sign(algorithm);
@@ -77,4 +75,6 @@ public class UserController {
         }
 
     }
+
+
 }

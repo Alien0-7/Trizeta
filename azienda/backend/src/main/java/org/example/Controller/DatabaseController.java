@@ -2,6 +2,7 @@ package org.example.Controller;
 
 
 import org.example.User;
+import org.example.Utils.Measurement;
 import org.example.Utils.UUIDUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.sql.*;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import java.nio.charset.StandardCharsets;
@@ -18,41 +19,50 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 
-
 public class DatabaseController {
     private static final Logger log = LoggerFactory.getLogger(DatabaseController.class);
     private static String DBUser;
     private static String DBPassword;
     private static String url;
-    private static String table;
+    private static String table_user;
+    private static String table_room;
+    private static String table_measurement;
+    private static String table_actuator;
     private static String columnPassword;
     private static String columnEmail;
     private static String columnUUID;
-    private static String columnName;
-    private static String columnSurname;
-    private static String columnAddress;
+    private static String columnName_user;
+    private static String columnSurname_user;
+    private static String columnAddress_user;
+    private static String columnName_room;
+    private static String columnFk_email_room;
+    private static String columnId_room_room;
+    private static String issuer;
     private static String error;
-
-    public static String getError() {
-        return error;
-    }
 
     public static void initDatabase() {
 
-        File configFile = new File("config.properties");
+        File configFile = new File("src/main/resources/config.properties");
         Properties properties = new Properties();
 
         if (!configFile.exists()) {
             properties.setProperty("user","");
             properties.setProperty("password","");
             properties.setProperty("url","");
-            properties.setProperty("table","");
+            properties.setProperty("table_user","");
+            properties.setProperty("table_room","");
+            properties.setProperty("table_measurement","");
+            properties.setProperty("table_actuator","");
             properties.setProperty("columnPassword","");
             properties.setProperty("columnEmail","");
             properties.setProperty("columnUUID","");
-            properties.setProperty("columnName","");
-            properties.setProperty("columnSurname","");
-            properties.setProperty("columnAddress","");
+            properties.setProperty("columnName_user","");
+            properties.setProperty("columnSurname_user","");
+            properties.setProperty("columnAddress_user","");
+            properties.setProperty("columnName_room","");
+            properties.setProperty("columnFk_email_room","");
+            properties.setProperty("columnId_room_room","");
+            properties.setProperty("issuer","");
 
             try {
                 FileOutputStream fos = new FileOutputStream(configFile);
@@ -69,13 +79,20 @@ public class DatabaseController {
                 DBUser = properties.getProperty("user");
                 DBPassword = properties.getProperty("password");
                 url = properties.getProperty("url");
-                table = properties.getProperty("table");
+                table_user = properties.getProperty("table_user");
+                table_room = properties.getProperty("table_room");
+                table_measurement = properties.getProperty("table_measurement");
+                table_actuator = properties.getProperty("table_actuator");
                 columnPassword = properties.getProperty("columnPassword");
                 columnEmail = properties.getProperty("columnEmail");
                 columnUUID = properties.getProperty("columnUUID");
-                columnName = properties.getProperty("columnName");
-                columnSurname = properties.getProperty("columnSurname");
-                columnAddress = properties.getProperty("columnAddress");
+                columnName_user = properties.getProperty("columnName_user");
+                columnSurname_user = properties.getProperty("columnSurname_user");
+                columnAddress_user = properties.getProperty("columnAddress_user");
+                columnName_room = properties.getProperty("columnName_room");
+                columnFk_email_room = properties.getProperty("columnFk_email_room");
+                columnId_room_room = properties.getProperty("columnId_room_room");
+                issuer = properties.getProperty("issuer");
 
             } catch (Exception ignored) {}
         }
@@ -91,13 +108,7 @@ public class DatabaseController {
 
         }
 
-        // TODO (optional) if table doesn't exists create it
-
     }
-
-    // TODO Connect getDataRequests() to a real "requests" table in the database
-    // TODO Handle SQL exceptions more specifically and return *meaningful* error messages
-    // TODO Sanitize and validate input data to ensure safety, even with prepared statements
 
     public static Boolean addUser(User user) {
 
@@ -105,7 +116,7 @@ public class DatabaseController {
             Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
             log.info("Connesso con il DataBase");
             Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("Select * from "+table+";");
+            ResultSet rs = stmt.executeQuery("Select * from "+table_user+";");
 
             while (rs.next()) {
 
@@ -127,7 +138,7 @@ public class DatabaseController {
 
             }
 
-            int rows = stmt.executeUpdate("insert into "+table+"("+columnUUID+", " +columnEmail+", "+columnPassword+" , "+columnName+", "+columnSurname+", "+columnAddress+") " +
+            int rows = stmt.executeUpdate("insert into "+table_user+"("+columnUUID+", " +columnEmail+", "+columnPassword+" , "+ columnName_user +", "+ columnSurname_user +", "+columnAddress_user+") " +
                     "values('"+ UUIDUtils.uuidToBytes(user.getUUID()) +"', '"+user.getEmail()+"', '"+hashPassword(user.getPassword())+"', '"+user.getName()+"', '"+user.getSurname()+"', '"+user.getAddress()+"');");
 
             if (rows > 0) {
@@ -155,18 +166,89 @@ public class DatabaseController {
         return true;
     }
 
-    public static boolean addArduino() {
+    public static Boolean addArduino(String room,String uuid, String data_type, double value) {
+
+        try {
+            Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
+            log.info("Connesso con il DataBase");
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("Select * from "+table_user+";");
+            String email = "";
+            String id_room = "";
+            int count = 0;
+
+            while (rs.next()) {
+
+                String uuid2 = UUIDUtils.bytesToUUID(rs.getBytes(columnUUID)).toString();
+
+                email = rs.getString(columnEmail);
+
+                if (uuid.equals(uuid2)) {
+
+                    rs = stmt.executeQuery("Select * from "+table_room+";");
+
+                    while (rs.next()) {
+
+                        if(room.equalsIgnoreCase(rs.getString(columnName_room)) && email.equalsIgnoreCase(rs.getString(columnFk_email_room))){
+
+                            id_room = rs.getString(columnId_room_room);
+
+                            int rows = stmt.executeUpdate("insert into "+table_measurement+"("+"value" + ", "+ "type" +", "+ "fk_room" +") " +
+                                    "values('"+ value + "', '"+data_type+"', '"+id_room+"');");
+
+                            if (rows > 0) {
+
+                                log.info("Inserimento riuscito di " + rows + " righe");
+                                return true;
+
+                            }
+
+                        }
+
+                        count++;
+
+                    }
+
+                    int rows = stmt.executeUpdate("insert into "+table_room+"("+columnName_room+", " +"floor"+", "+columnFk_email_room +") " +
+                            "values('"+ room +"', '"+1+"', '"+email+"');");
+
+                    rows = stmt.executeUpdate("insert into "+table_measurement+"("+"value"+", " +"date_measurement"+", "+"time_measurement"+" , "+ "type" +", "+ "fk_room" +") " +
+                            "values('"+ value +"', '"+"2025-05-22"+"', '"+"2025-05-22 14:30:00"+"', '"+data_type+"', '"+(count + 1)+"');");
+
+                    if (rows > 0) {
+
+                        log.info("Inserimento riuscito di " + rows + " righe");
+                        return true;
+
+                    }
+
+                }
+
+                return false;
+
+            }
+
+            rs.close();
+            stmt.close();
+            connection.close();
+
+            log.info("Connessione chiusa con successo");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
+        }
+
         return false;
+
     }
 
     public static User searchUser(String userEmail, String userPassword) {
         //! ensure email and password are not null
         try {
-
             Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
             log.info("Connesso con il DataBase");
             Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("Select * from "+table+";");
+            ResultSet rs = stmt.executeQuery("Select * from "+table_user+";");
 
             while (rs.next()) {
                 String currentEmail = rs.getString(columnEmail);
@@ -198,6 +280,101 @@ public class DatabaseController {
         }
 
         return null;
+    }
+
+    public static ArrayList<Measurement> getUserMeasurements(String typeGiven, String userUUID, String fromDate) {
+        try {
+            Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
+            log.info("Connesso con il DataBase");
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("Select * from "+table_user+";");
+            boolean found = false;
+            ArrayList<Measurement> measurements = new ArrayList<>();
+
+            while (rs.next()) {
+
+                String currentUUID = rs.getString(columnUUID);
+                if(userUUID.equals(currentUUID)) {
+
+                    found = true;
+                    log.info("Utente trovato");
+                }
+
+            }
+
+            if(found){
+                rs = stmt.executeQuery("Select * from "+table_measurement+";");
+
+                while (rs.next()) {
+                    String type = rs.getString("type");
+                    double value = rs.getDouble("value");
+                    String timestamp = rs.getString("timestamp");
+
+                    if(type.equalsIgnoreCase(typeGiven)){
+
+                        measurements.add(new Measurement(timestamp, (float) value));
+
+                    }
+
+                }
+
+                rs.close();
+                stmt.close();
+                connection.close();
+                log.info("Connessione chiusa con successo, Trasferimento effettuato");
+                return measurements;
+
+            }else{
+
+                rs.close();
+                stmt.close();
+                connection.close();
+                log.info("Connessione chiusa con successo, Utente non trovato");
+
+            }
+
+        } catch (SQLException e) {
+
+            log.error("Connessione fallita" + e.getMessage());
+
+        }
+        return null;
+    }
+
+    public static Boolean uuidExists(String uuid) {
+
+        try {
+            Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
+            log.info("Connesso con il DataBase");
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("Select * from "+table_user+";");
+
+            while (rs.next()) {
+
+                String uuid2 = UUIDUtils.bytesToUUID(rs.getBytes(columnUUID)).toString();
+
+                log.info(uuid2);
+
+                if (uuid.equals(uuid2)) {
+
+                    log.info("UUID trovato");
+                    return true;
+
+                }
+
+            }
+
+            rs.close();
+            stmt.close();
+            connection.close();
+
+            log.info("Connessione chiusa con successo");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
+        }
+
+        return false;
     }
 
     private static String hashPassword(String password) {
@@ -244,7 +421,11 @@ public class DatabaseController {
         return DBPassword;
     }
 
-    public static String getTable() {
-        return table;
+    public static String getIssuer() {
+        return issuer;
+    }
+
+    public static String getError() {
+        return error;
     }
 }
