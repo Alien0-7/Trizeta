@@ -35,6 +35,7 @@ public class DatabaseController {
     private static String columnAddress_user;
     private static String columnName_room;
     private static String columnFk_email_room;
+    private static String columnId_room_room;
     private static String issuer;
     private static String error;
 
@@ -59,6 +60,7 @@ public class DatabaseController {
             properties.setProperty("columnAddress_user","");
             properties.setProperty("columnName_room","");
             properties.setProperty("columnFk_email_room","");
+            properties.setProperty("columnId_room_room","");
             properties.setProperty("issuer","");
 
             try {
@@ -88,6 +90,7 @@ public class DatabaseController {
                 columnAddress_user = properties.getProperty("columnAddress_user");
                 columnName_room = properties.getProperty("columnName_room");
                 columnFk_email_room = properties.getProperty("columnFk_email_room");
+                columnId_room_room = properties.getProperty("columnId_room_room");
                 issuer = properties.getProperty("issuer");
 
             } catch (Exception ignored) {}
@@ -167,45 +170,81 @@ public class DatabaseController {
         return true;
     }
 
-//    public static boolean addArduino(String room,String uuid, String data_type, double value) {
-//
-//        try {
-//            Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
-//            log.info("Connesso con il DataBase");
-//            Statement stmt = connection.createStatement();
-//            ResultSet rs = stmt.executeQuery("Select * from "+table_user+";");
-//
-//            while (rs.next()) {
-//
-//                String uuid2 = UUIDUtils.bytesToUUID(rs.getBytes(columnUUID)).toString();
-//
-//                if (uuid.equals(uuid2)) {
-//
-//                    rs = stmt.executeQuery("Select * from "+table_room+";");
-//
-//                    while (rs.next()) {
-//
-//                        if(room.equalsIgnoreCase(rs.getString(columnName_room)) && )
-//
-//                    }
-//
-//                }
-//
-//            }
-//
-//            rs.close();
-//            stmt.close();
-//            connection.close();
-//
-//            log.info("Connessione chiusa con successo");
-//        } catch (Exception e) {
-//            log.error(e.getMessage());
-//            return null;
-//        }
-//
-//        return false;
-//
-//    }
+    public static Boolean addArduino(String room,String uuid, String data_type, double value) {
+
+        try {
+            Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
+            log.info("Connesso con il DataBase");
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("Select * from "+table_user+";");
+            String email = "";
+            String id_room = "";
+            int count = 0;
+
+            while (rs.next()) {
+
+                String uuid2 = UUIDUtils.bytesToUUID(rs.getBytes(columnUUID)).toString();
+
+                email = rs.getString(columnEmail);
+
+                if (uuid.equals(uuid2)) {
+
+                    rs = stmt.executeQuery("Select * from "+table_room+";");
+
+                    while (rs.next()) {
+
+                        if(room.equalsIgnoreCase(rs.getString(columnName_room)) && email.equalsIgnoreCase(rs.getString(columnFk_email_room))){
+
+                            id_room = rs.getString(columnId_room_room);
+
+                            int rows = stmt.executeUpdate("insert into "+table_measurement+"("+"value" + ", "+ "type" +", "+ "fk_room" +") " +
+                                    "values('"+ value + "', '"+data_type+"', '"+id_room+"');");
+
+                            if (rows > 0) {
+
+                                log.info("Inserimento riuscito di " + rows + " righe");
+                                return true;
+
+                            }
+
+                        }
+
+                        count++;
+
+                    }
+
+                    int rows = stmt.executeUpdate("insert into "+table_room+"("+columnName_room+", " +"floor"+", "+columnFk_email_room +") " +
+                            "values('"+ room +"', '"+1+"', '"+email+"');");
+
+                    rows = stmt.executeUpdate("insert into "+table_measurement+"("+"value"+", " +"date_measurement"+", "+"time_measurement"+" , "+ "type" +", "+ "fk_room" +") " +
+                            "values('"+ value +"', '"+"2025-05-22"+"', '"+"2025-05-22 14:30:00"+"', '"+data_type+"', '"+(count + 1)+"');");
+
+                    if (rows > 0) {
+
+                        log.info("Inserimento riuscito di " + rows + " righe");
+                        return true;
+
+                    }
+
+                }
+
+                return false;
+
+            }
+
+            rs.close();
+            stmt.close();
+            connection.close();
+
+            log.info("Connessione chiusa con successo");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
+        }
+
+        return false;
+
+    }
 
     public static User searchUser(String userEmail, String userPassword) {
         //! ensure email and password are not null

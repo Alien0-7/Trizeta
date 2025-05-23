@@ -19,17 +19,19 @@ public class ArduinoController {
         String rooom = ctx.formParam("room");
         double value = Double.parseDouble(ctx.formParam("value"));
 
-        if(data.equalsIgnoreCase("T")){
+        boolean intemp = DatabaseController.addArduino(rooom,uuid,data,value);
 
+        if (intemp) {
 
+            ctx.status(200);
 
-        } else if (data.equalsIgnoreCase("C")) {
+        } else if (!intemp){
 
+            ctx.status(400);
 
+        } else {
 
-        }else{
-
-
+            ctx.status(500);
 
         }
 
