@@ -18,6 +18,7 @@ export default function Settings() {
         setShowModal(false);
         signOut();
         navigate("/");
+        window.location.reload();
     };
 
     const cancelLogout = () => {

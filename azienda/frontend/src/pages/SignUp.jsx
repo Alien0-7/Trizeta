@@ -53,13 +53,15 @@ export default function Login(){
             const data = await SignUpApi(email, password, control_password, name, surname, address);
             if (data){
                 console.log("Login effettuato:", data);
-                signIn({
-                    token: data.authorization_bearer,
-                    expiresIn: 259200,
-                    tokenType: "Bearer",
-                    authState: {},
-                });
-                navigate('/profile');
+                if(signIn({
+                        auth: {
+                            token: data.authorization_bearer,
+                            type: 'Bearer'
+                        }
+                })){
+                    navigate('/profile');
+                    window.location.reload();
+                }
             }
         } catch (error) {
             if (error.response === 400) {
@@ -76,13 +78,15 @@ export default function Login(){
             const data = await LoginApi(email, password);
             if (data){
                 console.log("Login effettuato:", data);
-                signIn({
-                    token: data.authorization_bearer,
-                    expiresIn: 259200,
-                    tokenType: "Bearer",
-                    authState: {},
-                });
-                navigate('/profile');
+               if(signIn({
+                        auth: {
+                            token: data.authorization_bearer,
+                            type: 'Bearer'
+                        }
+                })){
+                    navigate('/profile');
+                    window.location.reload();
+                }
             }
         } catch (error) {
             if (error.response === 400) {
