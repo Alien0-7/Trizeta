@@ -63,15 +63,25 @@ export default function Login(){
                     window.location.reload();
                 }
             }
+            else{
+                setPassword_Error("Errore nei dati di registrazione");
+            }
         } catch (error) {
-            if (error.response === 400) {
-            setPassword_Error("Errore nei dati di registrazione");
-            } else{
-                if (!error.response === 200)
-                    setPassword_Error("Errore imprevisto");
+            const statusCode = error.response.status
+            if (statusCode === 400) {
+                setPassword_Error('Mail o Password errati');
+                setEmail('');
+                setPassword('');
+                setControl_Password('');
+            } else {
+                if (!statusCode === 200){
+                        setPassword_Error("Errore imprevisto");
+                        setEmail('');
+                        setPassword('');
+                }
             }
         }
-    };
+    }
 
     const handleLogin = async () => {
         try {
@@ -89,14 +99,20 @@ export default function Login(){
                 }
             }
         } catch (error) {
-            if (error.response === 400) {
-            setPassword_Error('Mail o Password errati');
+            const statusCode = error.response.status
+            if (statusCode === 400) {
+                setPassword_Error('Mail o Password errati');
+                setEmail('')
+                setPassword('')
             } else {
-            if (!error.response === 200)
-                    setPassword_Error("Errore imprevisto");
+                if (!statusCode === 200){
+                        setPassword_Error("Errore imprevisto");
+                        setEmail('');
+                        setPassword('');
+                }
             }
         }
-    };
+    }
 
     const toSingUp = () =>{
         if(action==="Sign Up"){
