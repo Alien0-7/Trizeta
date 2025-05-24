@@ -166,7 +166,7 @@ public class DatabaseController {
         return true;
     }
 
-    public static Boolean addArduino(String room,String uuid, String data_type, double value) {
+    public static Boolean addDataArduino(String room, String uuid, String data_type, double value) {
 
         try {
             Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
@@ -240,6 +240,41 @@ public class DatabaseController {
 
         return false;
 
+    }
+
+    public static User searchUser(String UUID) {
+        try {
+            Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
+            log.info("Connesso con il DataBase");
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("Select * from "+table_user+";");
+
+            while (rs.next()) {
+                String currentUUID = UUIDUtils.bytesToUUID(rs.getString(columnUUID).getBytes()).toString();
+
+                if(UUID.equals(currentUUID)) {
+                    User user = new User(rs.getString(columnEmail), null, rs.getString(columnName_user), rs.getString(columnSurname_user), rs.getString(columnAddress_user), UUIDUtils.bytesToUUID(rs.getBytes(columnUUID)));
+                    rs.close();
+                    stmt.close();
+                    connection.close();
+                    log.info("Connessione chiusa con successo, Utente trovato");
+                    return user;
+                }
+            }
+
+            rs.close();
+            stmt.close();
+            connection.close();
+
+            log.info("Connessione chiusa con successo, Utente non trovato");
+
+        } catch (SQLException e) {
+
+            log.error("Connessione fallita" + e.getMessage());
+
+        }
+
+        return null;
     }
 
     public static User searchUser(String userEmail, String userPassword) {

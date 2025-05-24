@@ -1,15 +1,9 @@
 package org.example.Controller;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Map;
-import java.util.UUID;
 
 public class ArduinoController {
     public static void addData(Context ctx) {
@@ -19,13 +13,13 @@ public class ArduinoController {
         String rooom = ctx.formParam("room");
         double value = Double.parseDouble(ctx.formParam("value"));
 
-        boolean intemp = DatabaseController.addArduino(rooom,uuid,data,value);
+        boolean is_dataAdded = DatabaseController.addDataArduino(rooom,uuid,data,value);
 
-        if (intemp) {
+        if (is_dataAdded) {
 
             ctx.status(200);
 
-        } else if (!intemp){
+        } else if (!is_dataAdded){
 
             ctx.status(400);
 

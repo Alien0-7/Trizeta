@@ -17,9 +17,9 @@ import org.jetbrains.annotations.NotNull;
 public class AIController {
 
     public static void predictor(@NotNull Context ctx) {
-        ctx.status(501);
         AI ai = new AI(readFromDB(ctx));
-
+        ArrayList<Measurement> predictedTemps = ai.evaluate();
+        ctx.json(Map.of("predicted_temperatures", predictedTemps));
     }
 
     public static ArrayList<Measurement> readFromDB(Context ctx) {

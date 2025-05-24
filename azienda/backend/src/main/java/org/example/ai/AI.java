@@ -13,7 +13,7 @@ public class AI {
 	private ArrayList<Measurement> temps;
 	private ArrayList<Measurement> predictedTemps;
 	private final int EPOCHS = 5000;
-	private String FILE_SAVE = "save", FILE_EXTENSION = ".dat";
+	private String FILE_SAVE = "src/main/java/org/example/ai/save", FILE_EXTENSION = ".dat";
 	private NeuralNetwork nn;
 
 
@@ -45,9 +45,6 @@ public class AI {
 			nn.save(FILE_SAVE + FILE_EXTENSION);
 		}
 
-		//TODO finish AI to return the measurements when it has finished (using wait()/notify())
-		evaluate();
-
 
 //		log.info("tutte le temps pred:");
 //		for (Measurement t: predictedTemps)
@@ -70,7 +67,7 @@ public class AI {
 
 	public void train() {
 		int N = EPOCHS;
-		long startTime = System.currentTimeMillis();
+		//long startTime = System.currentTimeMillis();
 
 		//training 
 		for(int k=0;k<N;k++) {
@@ -89,12 +86,9 @@ public class AI {
 				}
 			}
 
-//			if (k%100 == 0) {
-//				printProgressBar(startTime, k, N);
-//			}
 		}
 	}
-	public void evaluate() {
+	public ArrayList<Measurement> evaluate() {
 		//evaluating
 		for (int time = 0; time< Measurement.MAX_TIME; time+=GRANULARITY) {
 			Input inTime = new Input(time, InputType.CLASSIFICATION);
@@ -109,36 +103,7 @@ public class AI {
 			predictedTemps.add(new Measurement(time, (out[0]*(Measurement.MAX_TEMP- Measurement.MIN_TEMP)) + Measurement.MIN_TEMP));
 		}
 
+		return predictedTemps;
 	}
-//
-//	private void printProgressBar(long startTime, int i, long total) {
-//		clearLine();
-//		printPB((int) ((i * 100.0) / total), ((System.currentTimeMillis() - startTime) * total) / (i + 1) - (System.currentTimeMillis() - startTime));
-//
-//	}
-//
-//	private void printPB(int percent, long remainingTimeMillis) {
-//		int barLength = 50;
-//		int filledLength = (percent * barLength) / 100;
-//
-//		StringBuilder bar = new StringBuilder();
-//		bar.append("[");
-//		for (int j = 0; j < barLength; j++) {
-//			if (j < filledLength) {
-//				bar.append("=");
-//			} else {
-//				bar.append(" ");
-//			}
-//		}
-//		bar.append("] ");
-//
-//		System.out.print("\r" + bar + percent + "% - Remaining time: " + remainingTimeMillis / 1000 + "s");
-//	}
-//
-//	private static void clearLine() {
-//		System.out.print("\033[F");  // Move cursor up one line
-//		System.out.print("\033[2K"); // Clear the entire line
-//	}
-
 
 }

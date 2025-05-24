@@ -39,5 +39,4 @@ public class User {
         return uuid;
     }
 
-    // TODO Add fields such as name, surname, registration date, etc.
 }
