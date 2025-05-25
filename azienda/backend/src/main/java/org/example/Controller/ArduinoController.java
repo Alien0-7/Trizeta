@@ -42,15 +42,15 @@ public class ArduinoController {
         String uuid = ctx.formParam("uuid");
         boolean uuidExists = DatabaseController.uuidExists(uuid);
 
-        if(uuidExists){
+        if(uuidExists) {
 
             ctx.status(200);
 
-        } else if (!uuidExists) {
+        } else if(!uuidExists) {
 
             ctx.status(400);
 
-        }else{
+        } else {
 
             ctx.status(500);
 

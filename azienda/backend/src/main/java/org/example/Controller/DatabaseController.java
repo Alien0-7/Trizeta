@@ -1,8 +1,8 @@
 package org.example.Controller;
 
 
-import org.example.User;
 import org.example.Utils.Measurement;
+import org.example.Utils.User;
 import org.example.Utils.UUIDUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -328,7 +328,7 @@ public class DatabaseController {
 
             while (rs.next()) {
 
-                String currentUUID = rs.getString(columnUUID);
+                String currentUUID = UUIDUtils.bytesToUUID(rs.getString(columnUUID).getBytes()).toString();
                 if(userUUID.equals(currentUUID)) {
 
                     found = true;
@@ -338,18 +338,12 @@ public class DatabaseController {
             }
 
             if(found){
-                rs = stmt.executeQuery("Select * from "+table_measurement+";");
+                rs = stmt.executeQuery("Select * from "+table_measurement+" WHERE type = '"+typeGiven+"' AND time_measurement >= '"+fromDate+"';");
 
                 while (rs.next()) {
-                    String type = rs.getString("type");
                     double value = rs.getDouble("value");
-                    String timestamp = rs.getString("timestamp");
-
-                    if(type.equalsIgnoreCase(typeGiven)){
-
-                        measurements.add(new Measurement(timestamp, (float) value));
-
-                    }
+                    String time = rs.getString("time_measurement");
+                    measurements.add(new Measurement(time, value));
 
                 }
 
