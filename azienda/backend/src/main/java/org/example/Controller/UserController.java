@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import io.javalin.http.Context;
 
-import org.example.User;
+import org.example.Utils.User;
 import org.example.Utils.EmailValidator;
 import org.example.Utils.PasswordValidator;
 import org.jetbrains.annotations.NotNull;

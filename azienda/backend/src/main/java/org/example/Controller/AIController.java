@@ -9,53 +9,68 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.javalin.http.Context;
+import org.example.Utils.Measurement;
 import org.example.ai.AI;
 import org.example.ai.common.RandomSingleton;
-import org.example.Utils.Measurement;
+import org.example.ai.neuralNetwork.Temperature;
 import org.jetbrains.annotations.NotNull;
 
 public class AIController {
 
     public static void predictor(@NotNull Context ctx) {
-        ctx.status(501);
-        AI ai = new AI(readFromDB(ctx));
+        try {
+            ArrayList<Temperature> temps = readFromDB(ctx);
+            if (temps == null) {
+                ctx.status(200);
+                ctx.json(Map.of("Error", "Error while fetching form parameters"));
+            }
 
+            AI ai = new AI(temps);
+            ctx.status(200);
+            ctx.json(Map.of("predicted_temps", ai.evaluate()));
+        } catch (JWTVerificationException e) {
+            ctx.status(400);
+            ctx.json(Map.of("Error", "Error while trying to verificate JWT token"));
+        } catch (Exception e) {
+            ctx.status(400);
+            ctx.json(Map.of("Error", "Error while trying to generate predicted temperatures"));
+        }
     }
 
-    public static ArrayList<Measurement> readFromDB(Context ctx) {
+    public static ArrayList<Temperature> readFromDB(Context ctx) throws JWTVerificationException {
         String SECRET_KEY = "passwordSicuraSegreta";
         String ISSUER = DatabaseController.getIssuer();
 
         String token = ctx.formParam("token");
-        String uuid = "";
-        try {
+        String data_type = ctx.formParam("data_type");
+        String fromDate =  ctx.formParam("fromDate");
 
-            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
+        if (token == null || data_type == null || fromDate == null)
+            return null;
 
-            JWTVerifier verifier = JWT.require(algorithm)
-                    .withIssuer(ISSUER)
-                    .build();
+        Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
 
-            DecodedJWT jwt = verifier.verify(token);
+        JWTVerifier verifier = JWT.require(algorithm)
+                .withIssuer(ISSUER)
+                .build();
 
-            uuid = jwt.getClaim("uuid").asString();
+        DecodedJWT jwt = verifier.verify(token);
 
-        } catch (JWTVerificationException e) {
 
-            ctx.status(400);
-            ctx.json(Map.of("Error", "Token JWT invalido"));
+        ArrayList<Measurement> measurements = DatabaseController.getUserMeasurements(data_type, jwt.getClaim("uuid").asString(), fromDate);
+        ArrayList<Temperature> temps = new ArrayList<>();
+        for (Measurement m : measurements)
+            temps.add(new Temperature(m.getTime(), (float) m.getValue()));
 
-        }
-
-        return DatabaseController.getUserMeasurements(ctx.formParam("data_type"), uuid, ctx.formParam("fromDate"));
+        return temps;
     }
 
-    public static ArrayList<Measurement> generateRandom() {
-        ArrayList<Measurement> results = new ArrayList<>();
-        results.add(new Measurement(0, RandomSingleton.randFloat(10, 30)));
+    public static ArrayList<Temperature> generateRandom() {
+        ArrayList<Temperature> results = new ArrayList<>();
+        results.add(new Temperature(0, RandomSingleton.randFloat(10, 30)));
 
         for(int i=1;i<24*60;i++) {
-            results.add(new Measurement(i,
+            results.add(new Temperature(i,
                     results.get(i-1).getValue()
                             + RandomSingleton.randFloat(0, 0.4f)
                             + RandomSingleton.randFloat(0, 0.1f)

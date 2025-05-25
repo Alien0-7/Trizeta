@@ -7,6 +7,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.javalin.http.Context;
 import org.example.Utils.Measurement;
+import org.example.ai.neuralNetwork.Temperature;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

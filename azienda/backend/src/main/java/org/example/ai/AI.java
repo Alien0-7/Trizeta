@@ -3,21 +3,20 @@ package org.example.ai;
 import java.util.ArrayList;
 
 import org.example.ai.neuralNetwork.*;
-import org.example.Utils.Measurement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AI {
 	private static final Logger log = LoggerFactory.getLogger(AI.class);
 	private int GRANULARITY = 10, IN = 1, OUT = 1;;
-	private ArrayList<Measurement> temps;
-	private ArrayList<Measurement> predictedTemps;
+	private ArrayList<Temperature> temps;
+	private ArrayList<Temperature> predictedTemps;
 	private final int EPOCHS = 5000;
 	private String FILE_SAVE = "save", FILE_EXTENSION = ".dat";
 	private NeuralNetwork nn;
 
 
-	public AI(ArrayList<Measurement> temps) {
+	public AI(ArrayList<Temperature> temps) {
 		this.temps = temps;
 //		log.info("tutte le temperature");
 //		for (Measurement t: temps)
@@ -44,10 +43,6 @@ public class AI {
 
 			nn.save(FILE_SAVE + FILE_EXTENSION);
 		}
-
-		//TODO finish AI to return the measurements when it has finished (using wait()/notify())
-		evaluate();
-
 
 //		log.info("tutte le temps pred:");
 //		for (Measurement t: predictedTemps)
@@ -80,7 +75,7 @@ public class AI {
 			for (int j=0;j<temps.size();j++) {
 				in[0] = new Input(temps.get(j).getTime(), InputType.CLASSIFICATION);
 
-				out[0] = (temps.get(j).getValue()- Measurement.MIN_TEMP)/(Measurement.MAX_TEMP - Measurement.MIN_TEMP);
+				out[0] = (temps.get(j).getValue()- Temperature.MIN_TEMP)/(Temperature.MAX_TEMP - Temperature.MIN_TEMP);
 
 				try {
 					nn.test(in, out);
@@ -94,9 +89,9 @@ public class AI {
 //			}
 		}
 	}
-	public void evaluate() {
+	public ArrayList<Temperature> evaluate() {
 		//evaluating
-		for (int time = 0; time< Measurement.MAX_TIME; time+=GRANULARITY) {
+		for (int time = 0; time< Temperature.MAX_TIME; time+=GRANULARITY) {
 			Input inTime = new Input(time, InputType.CLASSIFICATION);
 
 			Float[] out = null;
@@ -106,9 +101,9 @@ public class AI {
 				e.printStackTrace();
 			}
 
-			predictedTemps.add(new Measurement(time, (out[0]*(Measurement.MAX_TEMP- Measurement.MIN_TEMP)) + Measurement.MIN_TEMP));
+			predictedTemps.add(new Temperature(time, (out[0]*(Temperature.MAX_TEMP- Temperature.MIN_TEMP)) + Temperature.MIN_TEMP));
 		}
-
+		return predictedTemps;
 	}
 //
 //	private void printProgressBar(long startTime, int i, long total) {

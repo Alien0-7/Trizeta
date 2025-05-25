@@ -1,47 +1,27 @@
 package org.example.Utils;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 public class Measurement {
+    private String time; //minutes
+    private double value;
 
-	public static final int MAX_TIME = 60 * 24, MAX_TEMP = 40, MIN_TEMP = 10;
+    public Measurement(String datetime, double value) {
+        this.time = datetime;
+        this.value = value;
+    }
 
-	private int time; //minutes
-	private float value;
-	
-	public Measurement(int time, float value) {
-		this.time = time;
-		this.value = value;
-	}
+    public String getTime() {
+        return time;
+    }
 
-	public Measurement(String datetime, float value) {
+    public void setTime(String time) {
+        this.time = time;
+    }
 
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		LocalDateTime localDateTime = LocalDateTime.parse(datetime, formatter);
+    public double getValue() {
+        return value;
+    }
 
-		this.time = generateTimeFromDateTime(localDateTime);
-		this.value = value;
-	}
-
-	private int generateTimeFromDateTime(LocalDateTime dateTime) {
-		return dateTime.getHour() * 60 + dateTime.getMinute();
-	}
-
-	public int getTime() {
-		return time;
-	}
-
-	public void setTime(int time) {
-		this.time = time;
-	}
-
-	public Float getValue() {
-		return value;
-	}
-
-	public void setValue(float value) {
-		this.value = value;
-	}
-	
+    public void setValue(float value) {
+        this.value = value;
+    }
 }
