@@ -8,11 +8,11 @@ import org.slf4j.LoggerFactory;
 
 public class AI {
 	private static final Logger log = LoggerFactory.getLogger(AI.class);
-	private int GRANULARITY = 10, IN = 1, OUT = 1;;
+	private int GRANULARITY = 10, IN = 1, OUT = 1;
 	private ArrayList<Temperature> temps;
 	private ArrayList<Temperature> predictedTemps;
 	private final int EPOCHS = 5000;
-	private String FILE_SAVE = "save", FILE_EXTENSION = ".dat";
+	private String FILE_SAVE = "src/main/java/org/example/ai/save", FILE_EXTENSION = ".dat";
 	private NeuralNetwork nn;
 
 

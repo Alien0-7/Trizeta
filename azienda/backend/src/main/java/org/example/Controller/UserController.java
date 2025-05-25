@@ -1,7 +1,10 @@
 package org.example.Controller;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import io.javalin.http.Context;
 
 import org.example.Utils.User;
@@ -77,4 +80,32 @@ public class UserController {
     }
 
 
+    public static void userInfo(@NotNull Context ctx) {
+        String SECRET_KEY = "passwordSicuraSegreta";
+        String ISSUER = DatabaseController.getIssuer();
+
+        String token = ctx.formParam("token");
+
+        try {
+
+            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
+
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer(ISSUER)
+                    .build();
+
+            DecodedJWT jwt = verifier.verify(token);
+
+            User user = DatabaseController.searchUser(jwt.getClaim("uuid").asString());
+
+            ctx.status(200);
+            ctx.json(Map.of("user_info", user));
+
+        } catch (JWTVerificationException e) {
+
+            ctx.status(400);
+            ctx.json(Map.of("Error", "Token JWT invalido"));
+
+        }
+    }
 }

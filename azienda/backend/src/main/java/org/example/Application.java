@@ -19,6 +19,7 @@ public class Application {
                         post(Application::ping);
                         post("/register", UserController::registerUser);
                         post("/login", UserController::loginUser);
+                        post("/getuserinfo", UserController::userInfo);
                         post("/temperature", BuildController::getTemperature);
                         post("/humidity", BuildController::getHumidity);
                         post("/co2", BuildController::getCO2);
