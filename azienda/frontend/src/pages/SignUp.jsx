@@ -2,6 +2,7 @@ import '../styles/SignUp.css'
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { SignUpApi, LoginApi} from '../utils/SignUpLogin.js';
+import { UserInfoApi } from '../utils/InformationRequester.js'
 import { Eye, EyeOff } from 'lucide-react';
 import useSignIn from 'react-auth-kit/hooks/useSignIn';
 
@@ -53,10 +54,18 @@ export default function Login(){
             const data = await SignUpApi(email, password, control_password, name, surname, address);
             if (data){
                 console.log("Login effettuato:", data);
+                const data2 = await UserInfoApi()
                 if(signIn({
                         auth: {
                             token: data.authorization_bearer,
                             type: 'Bearer'
+                        },
+                        userState: {
+                            name: data.user_info.name,
+                            surname: data.user_info.surname,
+                            email: data.user_info.email,
+                            address: data.user_info.address,
+                            uuid: data.user_info.uuid
                         }
                 })){
                     navigate('/profile');
@@ -88,10 +97,18 @@ export default function Login(){
             const data = await LoginApi(email, password);
             if (data){
                 console.log("Login effettuato:", data);
-               if(signIn({
+                const data2 = await UserInfoApi(data.authorization_bearer);
+                if(signIn({
                         auth: {
                             token: data.authorization_bearer,
                             type: 'Bearer'
+                        },
+                        userState: {
+                            name: data2.user_info.name,
+                            surname: data2.user_info.surname,
+                            email: data2.user_info.email,
+                            address: data2.user_info.address,
+                            uuid: data2.user_info.uuid
                         }
                 })){
                     navigate('/profile');
@@ -99,6 +116,7 @@ export default function Login(){
                 }
             }
         } catch (error) {
+            console.log(error)
             const statusCode = error.response.status
             if (statusCode === 400) {
                 setPassword_Error('Mail o Password errati');
