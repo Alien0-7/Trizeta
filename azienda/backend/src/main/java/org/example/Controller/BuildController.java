@@ -23,6 +23,7 @@ public class BuildController {
 
         String token = ctx.formParam("token");
         String fromDate = ctx.formParam("fromDate");
+        String toDate =  ctx.formParam("toDate");
 
         try {
 
@@ -34,7 +35,7 @@ public class BuildController {
 
             DecodedJWT jwt = verifier.verify(token);
 
-            ArrayList<Measurement> temperature = DatabaseController.getUserMeasurements(type, jwt.getClaim("uuid").asString(), fromDate);
+            ArrayList<Measurement> temperature = DatabaseController.getUserMeasurements(type, jwt.getClaim("uuid").asString(), fromDate, toDate);
 
             ctx.status(200);
             ctx.json(Map.of("temperature", temperature));
@@ -56,6 +57,7 @@ public class BuildController {
 
         String token = ctx.formParam("token");
         String fromDate = ctx.formParam("fromDate");
+        String toDate =  ctx.formParam("toDate");
 
         try {
 
@@ -67,7 +69,7 @@ public class BuildController {
 
             DecodedJWT jwt = verifier.verify(token);
 
-            ArrayList<Measurement> humidity = DatabaseController.getUserMeasurements(type, jwt.getClaim("uuid").asString(), fromDate);
+            ArrayList<Measurement> humidity = DatabaseController.getUserMeasurements(type, jwt.getClaim("uuid").asString(), fromDate, toDate);
 
             ctx.status(200);
             ctx.json(Map.of("humidity", humidity));
@@ -89,6 +91,7 @@ public class BuildController {
 
         String token = ctx.formParam("token");
         String fromDate = ctx.formParam("fromDate");
+        String toDate =  ctx.formParam("toDate");
 
         try {
 
@@ -100,7 +103,7 @@ public class BuildController {
 
             DecodedJWT jwt = verifier.verify(token);
 
-            ArrayList<Measurement> co2 = DatabaseController.getUserMeasurements(type, jwt.getClaim("uuid").asString(), fromDate);
+            ArrayList<Measurement> co2 = DatabaseController.getUserMeasurements(type, jwt.getClaim("uuid").asString(), fromDate, toDate);
 
             ctx.status(200);
             ctx.json(Map.of("Co2", co2));

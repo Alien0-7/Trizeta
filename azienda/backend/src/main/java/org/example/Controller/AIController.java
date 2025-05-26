@@ -44,6 +44,7 @@ public class AIController {
         String token = ctx.formParam("token");
         String data_type = ctx.formParam("data_type");
         String fromDate =  ctx.formParam("fromDate");
+        String toDate =  ctx.formParam("toDate");
 
         if (token == null || data_type == null || fromDate == null)
             return null;
@@ -57,7 +58,7 @@ public class AIController {
         DecodedJWT jwt = verifier.verify(token);
 
 
-        ArrayList<Measurement> measurements = DatabaseController.getUserMeasurements(data_type, jwt.getClaim("uuid").asString(), fromDate);
+        ArrayList<Measurement> measurements = DatabaseController.getUserMeasurements(data_type, jwt.getClaim("uuid").asString(), fromDate, toDate);
         ArrayList<Temperature> temps = new ArrayList<>();
         for (Measurement m : measurements)
             temps.add(new Temperature(m.getTime(), (float) m.getValue()));

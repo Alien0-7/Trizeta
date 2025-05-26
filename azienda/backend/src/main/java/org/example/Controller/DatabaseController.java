@@ -317,7 +317,7 @@ public class DatabaseController {
         return null;
     }
 
-    public static ArrayList<Measurement> getUserMeasurements(String typeGiven, String userUUID, String fromDate) {
+    public static ArrayList<Measurement> getUserMeasurements(String typeGiven, String userUUID, String fromDate , String toDate) {
         try {
             Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
             log.info("Connesso con il DataBase");
@@ -338,7 +338,7 @@ public class DatabaseController {
             }
 
             if(found){
-                rs = stmt.executeQuery("Select * from "+table_measurement+" WHERE type = '"+typeGiven+"' AND time_measurement >= '"+fromDate+"';");
+                rs = stmt.executeQuery("Select * from "+table_measurement+" WHERE type = '"+typeGiven+"' AND time_measurement >= '"+fromDate+"' AND time_measurement <= '"+toDate+"';");
 
                 while (rs.next()) {
                     double value = rs.getDouble("value");
