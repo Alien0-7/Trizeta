@@ -2,26 +2,36 @@ package org.example.ai.classification;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 
 import org.example.ai.common.Point;
-import org.example.ai.neuralNetwork.*;
+import org.example.ai.common.ProgressBarUtil;
+import org.example.ai.common.ScreenshotTaker;
+import org.example.ai.neuralNetwork.ActivationFunctionType;
+import org.example.ai.neuralNetwork.Input;
+import org.example.ai.neuralNetwork.InputType;
+import org.example.ai.neuralNetwork.NeuralNetwork;
+import org.example.ai.neuralNetwork.NeuralNetworkBuilder;
+import org.example.ai.neuralNetwork.NeuralNetworkException;
+import org.example.ai.neuralNetwork.NeuralNetworkSettings;
+
 
 public class Frame extends JFrame implements RepaintListener, TrainListener {
 
-	
-	private static final int PREDICTED_POINTS_HIGHLIGHT = 1000, EPOCHS = 100000;
-	public static int WIDTH = Panel.DIMENSION + 150, HEIGHT = Panel.DIMENSION + 40, GRANULARITY=3;
-	private int x, y;
+	public static final int EPOCHS = 10000, EVALUATION_INTERVAL = 200;
+	public static final int WIDTH = Panel.DIMENSION + 300, HEIGHT = Panel.DIMENSION + 60, GRANULARITY=1;
 	private Panel mainPanel;
 	private ButtonPanel buttonPanel;
 
 	NeuralNetwork nn;
-	int IN = 2, OUT = 2;
+	int IN = 2, OUT = 3;
 
 	public Frame() {
 		super("Classification");
@@ -29,11 +39,7 @@ public class Frame extends JFrame implements RepaintListener, TrainListener {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		int w = (int) screenSize.getWidth();
 		int h = (int) screenSize.getHeight();
-		x = (w-WIDTH) / 2;
-		y = (h-HEIGHT) / 2;
-
-		setBounds(x, y, WIDTH, HEIGHT);
-
+		setBounds((w-WIDTH) / 2, (h-HEIGHT) / 2, WIDTH, HEIGHT);
 		setLayout(new BoxLayout(getContentPane(), BoxLayout.LINE_AXIS));		
 
 		mainPanel = new Panel(this);
@@ -43,11 +49,23 @@ public class Frame extends JFrame implements RepaintListener, TrainListener {
 		add(buttonPanel);
 
 		setVisible(true);
-		
+
+		try {
+			ObjectInputStream ois = new ObjectInputStream(new FileInputStream("inputsEsempio3.dat"));
+			mainPanel.setPoints((ArrayList<Point>) ois.readObject());
+			ois.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		NeuralNetworkSettings.setUseDropout(true);
+		NeuralNetworkSettings.setDropoutRate(0.1f);
+		NeuralNetworkSettings.setUseInertia(true);
+
 		nn = NeuralNetworkBuilder.Builder()
 				.input(IN)
-				.hidden(3, ActivationFunctionType.SIGMOID)
-				.hidden(3, ActivationFunctionType.SIGMOID)
+				.hidden(12, ActivationFunctionType.GELU)
+				.hidden(12, ActivationFunctionType.GELU)
 				.output(OUT, ActivationFunctionType.SIGMOID)
 				.build();
 	}
@@ -60,94 +78,112 @@ public class Frame extends JFrame implements RepaintListener, TrainListener {
 	@Override
 	public void train() {
 		mainPanel.setEditable(false);
-		int N = EPOCHS;
+
+		takeScreenshot();
+
+		ArrayList<Point> points = mainPanel.getPoints();
 		long startTime = System.currentTimeMillis();
 
+		for(int k=0;k<EPOCHS;k++) {
+			Input[] in = new Input[nn.getIn()];
+			Float[] out = new Float[nn.getOut()];
+
+			for(int j=0;j<points.size();j++) {
+				in[0] = new Input(points.get(j).getInput(0), InputType.CLASSIFICATION);
+				in[1] = new Input(points.get(j).getInput(1), InputType.CLASSIFICATION);
+
+				out[0] = points.get(j).getType().equals(Color.RED) ? 1f : 0;
+				out[1] = points.get(j).getType().equals(Color.GREEN) ? 1f : 0;
+				out[2] = points.get(j).getType().equals(Color.BLUE) ? 1f : 0;
+
+				try {
+					nn.train(in, out);
+				} catch (NeuralNetworkException e) {
+					e.printStackTrace();
+				}
+			}
+
+			if(k%EVALUATION_INTERVAL == 0 && k!=0) {
+				ProgressBarUtil.printProgressBar(startTime, k, EPOCHS);
+				feedForwardAndPaint();
+			}
+		}
+
+		ProgressBarUtil.printProgressBar(startTime, EPOCHS, EPOCHS);
+		feedForwardAndPaint();
+
+		mainPanel.setEditable(true);
+
+	}
+
+	private void takeScreenshot() {
+		java.awt.Point locationOnScreen = mainPanel.getLocationOnScreen();
+		Rectangle r = new Rectangle(locationOnScreen, new Dimension(Panel.DIMENSION,Panel.DIMENSION));
+		ScreenshotTaker.take(r);		
+	}
+
+	public void feedForwardAndPaint() {
 		try {
+			ArrayList<Point> predictedPoints = new ArrayList<Point>();
+			ArrayList<Thread> threads = new ArrayList<Thread>();
 
-			//testing 
-			for(int k=0;k<N;k++) {
-				Input[] in = new Input[IN];
-				Float[] out = new Float[OUT];
-
-				for(int j=0;j<mainPanel.getPoints().size();j++) {
-					in[0] = new Input(mainPanel.getPoints().get(j).getInput(0), InputType.CLASSIFICATION);
-					in[1] = new Input(mainPanel.getPoints().get(j).getInput(1), InputType.CLASSIFICATION);
-
-					out[0] = mainPanel.getPoints().get(j).getType().equals(Color.RED) ? 1f : 0;
-					out[1] = mainPanel.getPoints().get(j).getType().equals(Color.BLUE) ? 1f : 0;
-
-					nn.test(in, out);
-				}
-
-				if(k%1000 == 0) {
-				printProgressBar(startTime, k, N);
-				}
+			for(int y=0;y<Panel.DIMENSION;y+=GRANULARITY) {
+				Thread t = new ThreadEvaluation(y, predictedPoints, nn.deepCopy());
+				t.start();
+				threads.add(t);
 			}
-			System.out.println();
+			for(Thread t : threads) {
+				t.join();
+			}
 
-			//evaluating
-			ArrayList<Point> determinedPoints = new ArrayList<Point>();
-			for(int x=0;x<Panel.DIMENSION;x+=GRANULARITY) {
-				for(int y=0;y<Panel.DIMENSION;y+=GRANULARITY) {
-					Input inX = new Input(x, InputType.CLASSIFICATION);
-					Input inY = new Input(y, InputType.CLASSIFICATION);
-
-					Float[] out = nn.evaluate(inX, inY);
-
-					Color color;
-					if(out[0]>out[1]) {
-						int transp = Math.min((int) ((out[0]-out[1])*PREDICTED_POINTS_HIGHLIGHT),255);
-						color = new Color(255,0,0,Math.abs(transp));
-					} else {
-						int transp = Math.min((int) ((out[1]-out[0])*PREDICTED_POINTS_HIGHLIGHT),255);
-						color = new Color(0,0,255,Math.abs(transp));
+			ArrayList<Point> points = mainPanel.getPoints();
+			Float[] actual = new Float[OUT];
+			Float[] predicted = new Float[OUT];
+			Float mae = 0f, mse = 0f;
+			int count = 0;
+			for(int j=0;j<mainPanel.getPoints().size();j++) {
+				for(int i=0;i<predictedPoints.size();i++) {
+					if(mainPanel.getPoints().get(j).getInput(0) == predictedPoints.get(i).getInput(0) &&
+							mainPanel.getPoints().get(j).getInput(1) == predictedPoints.get(i).getInput(1)) {
+						
+						actual[0] = points.get(j).getType().equals(Color.RED) ? 1f : 0;
+						actual[1] = points.get(j).getType().equals(Color.GREEN) ? 1f : 0;
+						actual[2] = points.get(j).getType().equals(Color.BLUE) ? 1f : 0;
+						
+						predicted[0] = predictedPoints.get(j).getType().getRed()/255f;
+						predicted[1] = predictedPoints.get(j).getType().getGreen()/255f;
+						predicted[2] = predictedPoints.get(j).getType().getBlue()/255f;
+						
+						mae += NeuralNetwork.calculateMAE(actual, predicted);
+						mse += NeuralNetwork.calculateMSE(actual, predicted);
+						count ++;
 					}
-					determinedPoints.add(new Point(color,x,y));
 				}
 			}
-			System.out.println("done");
-			mainPanel.setPredictedPoints(determinedPoints);
+			mae /= count;
+			mse /= count;
 
-			mainPanel.setEditable(true);
+			mainPanel.setPredictedPoints(predictedPoints);
+			mainPanel.setMae(mae);
+			mainPanel.setMse(mse);
+
 			repaint();
-			System.out.println("repainted");
+
+			Thread.sleep(1000);
+			//wait for the repaint to apply
+			takeScreenshot();
 
 
-		} catch (NeuralNetworkException e) {
+
+		}catch(Exception e) {
 			e.printStackTrace();
 		}
 
-
 	}
 
-	private void printProgressBar(long startTime, int i, long total) {
-		clearLine();
-		printPB((int) ((i * 100.0) / total), ((System.currentTimeMillis() - startTime) * total) / (i + 1) - (System.currentTimeMillis() - startTime));
-
+	public ArrayList<Point> getInputs() {
+		return mainPanel.getPoints();
 	}
 
-	private void printPB(int percent, long remainingTimeMillis) {
-		int barLength = 50;
-		int filledLength = (percent * barLength) / 100;
-
-		StringBuilder bar = new StringBuilder();
-		bar.append("[");
-		for (int j = 0; j < barLength; j++) {
-			if (j < filledLength) {
-				bar.append("=");
-			} else {
-				bar.append(" ");
-			}
-		}
-		bar.append("] ");
-
-		System.out.print("\r" + bar + percent + "% - Remaining time: " + remainingTimeMillis / 1000 + "s");
-	}
-
-	private static void clearLine() {
-		System.out.print("\033[F");  // Move cursor up one line
-		System.out.print("\033[2K"); // Clear the entire line
-	}
 
 }

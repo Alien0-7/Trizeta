@@ -1,5 +1,7 @@
 package org.example.ai.classification;
+
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -10,20 +12,19 @@ import javax.swing.SwingUtilities;
 
 import org.example.ai.common.Point;
 
-public class Panel extends JPanel  {
+public class Panel extends JPanel {
 
 	public static final int DIMENSION = 700, SIZE = 20, PREDICTED_SIZE = 2;
 	private static final long timeBetweenPresses = 100;
-	
-	private RepaintListener frame;
+
 	private ArrayList<Point> points;
 	private ArrayList<Point> predictedPoints;
 	private long lastPress;
 	private boolean editable;
+	private float mae, mse;
 
 	public Panel(RepaintListener frame) {
 		super();
-		this.frame = frame;
 		points = new ArrayList<Point>();
 		predictedPoints = new ArrayList<Point>();
 		editable = true;
@@ -57,11 +58,18 @@ public class Panel extends JPanel  {
 				}
 
 				Color type;
+
 				if (SwingUtilities.isRightMouseButton(e)) {
 					type = Color.BLUE;
-				} else {
+				} else if(SwingUtilities.isMiddleMouseButton(e)) {
+					type = Color.GREEN;
+				}
+				else {
 					type = Color.RED;
 				}
+
+
+
 
 				points.add(new Point(type, x, y));
 				frame.repaint();
@@ -79,8 +87,8 @@ public class Panel extends JPanel  {
 			public void mouseClicked(MouseEvent e) {
 			}
 		});
-		
-		
+
+
 
 	}
 
@@ -88,19 +96,23 @@ public class Panel extends JPanel  {
 		super.paint(g);
 
 		g.setColor(Color.WHITE);
-		g.fillRect(0, 0, DIMENSION, DIMENSION);
+		g.fillRect(0, 0, DIMENSION+1, DIMENSION+1);
 		g.setColor(Color.BLACK);
-		g.drawRect(0, 0, DIMENSION, DIMENSION);
-		
+		g.drawRect(0, 0, DIMENSION+1, DIMENSION+1);
+
 		for(Point p : predictedPoints) {
 			g.setColor(p.getType());
 			g.fillRect((int) (p.getInput(0)-PREDICTED_SIZE/2),(int) (p.getInput(1)-PREDICTED_SIZE/2), PREDICTED_SIZE, PREDICTED_SIZE);
 		}
-		
+
 		for(Point p : points) {
 			g.setColor(p.getType());
 			g.fillRect((int) (p.getInput(0)-SIZE/2),(int) (p.getInput(1)-SIZE/2), SIZE, SIZE);
 		}
+
+		g.setColor(Color.black);
+		g.setFont(new Font("Arial", Font.BOLD, 50));
+		g.drawString("MAE: " + String.format("%.4f", mae) + " MSE: " + String.format("%.4f", mse), 5, 50);
 	}
 
 	public void setEditable(boolean b) {
@@ -114,10 +126,16 @@ public class Panel extends JPanel  {
 	public void setPoints(ArrayList<Point> points) {
 		this.points = points;
 	}
-	
+
 	public void setPredictedPoints(ArrayList<Point> predictedPoints) {
 		this.predictedPoints = predictedPoints;
 	}
 
+	public void setMae(float mae) {
+		this.mae = mae;
+	}
+	public void setMse(float mse) {
+		this.mse = mse;
+	}
 
 }

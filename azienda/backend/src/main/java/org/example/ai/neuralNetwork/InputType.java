@@ -5,9 +5,11 @@ import org.example.ai.classification.Panel;
 public enum InputType {
 
 	CLASSIFICATION(0,Panel.DIMENSION),
-	XOR(0,1);
+	TEMPERATURE(-100,100),
+	CO2(-3000,3000),
+	HUMIDITY(-200,200);
 	
-	private float minValue, maxValue;
+	private float minValue, maxValue; //unit: amount that defines how many units are in a line of the graph
 	
 	InputType(float minValue, float maxValue) {
 		this.minValue = minValue;
@@ -20,5 +22,9 @@ public enum InputType {
 	
 	public float getMaxValue() {
 		return maxValue;
+	}
+
+	public float getDelta() {
+		return getMaxValue() - getMinValue();
 	}
 }
