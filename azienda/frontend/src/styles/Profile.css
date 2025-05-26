@@ -1,0 +1,67 @@
+.body-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+  background-color: #23272F; /* sfondo scuro */
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  background-color: #2C2F38; /* grigio scuro, diverso da container */
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 1200px;
+  height: 1200px;
+  box-sizing: border-box;
+}
+
+.card-grid > div {
+  background-color: #1E2127; /* quasi nero, per i riquadri */
+  border-radius: 16px;
+  padding: 20px;
+  height: 400px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: aqua; /* testo se presente */
+}
+
+.card-grid canvas {
+  max-width: 90% !important;
+  max-height: 80% !important;
+}
+
+/* Optional: se vuoi un titolo sopra ogni grafico */
+.card-grid > div .title {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: aqua;
+}
+
+/* Responsive per mobile */
+@media screen and (max-width: 768px) {
+  .body-container {
+    padding: 20px;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+    height: auto;
+    padding: 20px;
+  }
+
+  .card-grid > div {
+    height: 350px;
+  }
+}

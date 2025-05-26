@@ -54,13 +54,14 @@ export default function Profile() {
   return (
     <>
       <div className='body-container'>
+        <div className='card-grid'>
         {temperatureData && <div id='temperature'>
           {<Line
             data={{
               labels: temperatureData.map((data)=> data.time),
               datasets: [
                 {
-                  labels: "Temperature",
+                  labels: "Temperature", 
                   data: temperatureData.map((data)=> data.value*1),
                   backgroundColor: "#064FF0",
                   borderColor: "#064FF0",
@@ -68,38 +69,42 @@ export default function Profile() {
               ],
             }}
             options={{
-              responsive: true,
-              plugins: {
-                title: {
-                display: true,
-                text: 'Temperature Over Time',
-                },
-              tooltip: {
-                callbacks: {
-                  label: function(tooltipItem) {
-                    return `${tooltipItem.raw}°C`; 
-                  },
-                },
-              },
-            },
-            scales: {
-              x: {
-                type: 'category', 
-                labels: temperatureData.map((data) => data.time), 
-              },
-              y: {
-                type: 'linear',
-                min: 26, 
-                max: 27,
-              },
-            },
-            }}
+  responsive: true,
+  maintainAspectRatio: false, // aggiunto
+  plugins: {
+    title: {
+      display: true,
+      text: 'Temperature Over Time',
+    },
+    tooltip: {
+      callbacks: {
+        label: function(tooltipItem) {
+          return `${tooltipItem.raw}°C`; 
+        },
+      },
+    },
+  },
+  scales: {
+    x: {
+      type: 'category',
+      labels: temperatureData.map((data) => data.time), 
+    },
+    y: {
+      type: 'linear',
+      min: 26,
+      max: 27,
+    },
+  },
+}}
+
           />}
         </div>}
         {humidityData && <div id='humidity'>{"Humidity"}</div>}
         {airData && <div id='airquality'>{"Air quality"}</div>}
         {Co2Data && <div id='co2'>{"Co2"}</div>}
       </div>
+      </div>
     </>
   );
 };
+
