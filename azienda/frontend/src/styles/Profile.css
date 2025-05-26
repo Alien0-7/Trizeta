@@ -79,3 +79,41 @@ html, body {
   overflow-x: hidden;
 }
 
+.co2-table {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.co2-box {
+  padding: 20px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.co2-box .range {
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+}
+
+.co2-box .quality {
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+}
+
+.co2-box .desc {
+  font-size: 0.95rem;
+}
+
+/* Color classes */
+.blue { background-color: #00BFFF; }
+.green { background-color: #32CD32; }
+.yellow { background-color: #FFD700; color: black; }
+.red { background-color: #FF6347; }
+.purple { background-color: #8A2BE2; }

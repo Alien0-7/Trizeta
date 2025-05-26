@@ -62,7 +62,7 @@ export default function Profile() {
       });
       setCo2Data(co2);
       const somma = co2.reduce((accumulatore, elemento) => accumulatore + elemento.value, 0);
-      const media = somma/co2.length;
+      const media = somma / co2.length;
       setAirData(media);
     }
     fetchData();
@@ -104,7 +104,7 @@ export default function Profile() {
                       },
                     },
                     legend: {
-                      display: false, 
+                      display: false,
                     },
                   },
                   scales: {
@@ -155,7 +155,7 @@ export default function Profile() {
                       },
                     },
                     legend: {
-                      display: false, 
+                      display: false,
                     },
                   },
                   scales: {
@@ -204,7 +204,7 @@ export default function Profile() {
                       },
                     },
                     legend: {
-                      display: false, 
+                      display: false,
                     },
                   },
                   scales: {
@@ -224,11 +224,27 @@ export default function Profile() {
           )}
         </div><div className="graphContainer">
           {airData && (
-            <div id = "Air">
-              
+            <div className="co2-table">
+              <h3 className="card-title">Qualità attuale dell'aria</h3>
+              {[
+                { range: "< 600 ppm", quality: "Eccellente", desc: "Aria fresca, buona ventilazione", color: "blue", min: 0, max: 600 },
+                { range: "600 – 1.000 ppm", quality: "Buona", desc: "Accettabile per ambienti interni", color: "green", min: 600, max: 1000 },
+                { range: "1.000 – 1.400 ppm", quality: "Moderata", desc: "Possibile sensazione di aria viziata", color: "yellow", min: 1000, max: 1400 },
+                { range: "1.400 – 2.000 ppm", quality: "Scarsa", desc: "Qualità dell’aria bassa, necessità di ventilazione", color: "red", min: 1400, max: 2000 },
+                { range: "> 2.000 ppm", quality: "Pessima", desc: "Malesseri possibili, ventilazione urgente", color: "purple", min: 2000, max: Infinity },
+              ]
+                .filter(item => airData >= item.min && airData < item.max)
+                .map((item, idx) => (
+                  <div key={idx} className={`co2-box ${item.color}`}>
+                    <p className="range">{item.range}</p>
+                    <p className="quality">{item.quality}</p>
+                    <p className="desc">{item.desc}</p>
+                  </div>
+                ))}
             </div>
           )}
-        </div>        
+
+        </div>
       </div>
     </>
   );
