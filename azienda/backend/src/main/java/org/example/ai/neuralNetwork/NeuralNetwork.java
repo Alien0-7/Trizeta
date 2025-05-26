@@ -1,12 +1,6 @@
 package org.example.ai.neuralNetwork;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 
 public class NeuralNetwork implements Serializable {
@@ -197,17 +191,12 @@ public class NeuralNetwork implements Serializable {
 		return mae / actual.length;
 	}
 
-	public static NeuralNetwork load(String f) {
-		NeuralNetwork nn = null;
-		try {
-			FileInputStream fin = new FileInputStream(f);
-			ObjectInputStream ois = new ObjectInputStream(fin);
-			nn = (NeuralNetwork) ois.readObject();
-			ois.close();
+	public static NeuralNetwork load(String f) throws IOException, ClassNotFoundException {
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		FileInputStream fin = new FileInputStream(f);
+		ObjectInputStream ois = new ObjectInputStream(fin);
+		NeuralNetwork nn = (NeuralNetwork) ois.readObject();
+		ois.close();
 
 		return nn;
 	}

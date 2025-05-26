@@ -1,5 +1,7 @@
 package org.example.ai;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import org.example.Utils.SimpleDataPoint;
@@ -11,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 public class AI {
 	private static final Logger log = LoggerFactory.getLogger(AI.class);
-	public final static int GRANULARITY=10, EVALUATION_INTERVAL = 100, EPOCHS = 10000;
+	public final static int GRANULARITY = 10, EVALUATION_INTERVAL = 100, EPOCHS = 5000;
 
 	private ArrayList<DataPoint> dataValues;
 	private ArrayList<DataPoint> predictedData;
@@ -32,17 +34,21 @@ public class AI {
 		inputType = dataValues.get(0).getInputType();
 		visualizationType = dataValues.get(0).getVisualizationType();
 
-		nn = NeuralNetwork.load(FILE_SAVE + FILE_EXTENSION);
+		try {
+			nn = NeuralNetwork.load(FILE_SAVE + FILE_EXTENSION);
+		} catch (Exception ignored) {}
 
-		if(nn == null) {
+		if (nn == null) {
 			NeuralNetworkSettings.setUseDropout(true);
 			NeuralNetworkSettings.setDropoutRate(0.1f);
 			NeuralNetworkSettings.setUseInertia(true);
 
 			nn = NeuralNetworkBuilder.Builder()
 					.input(IN)
-					.hidden(2, ActivationFunctionType.GELU)
-					.hidden(2, ActivationFunctionType.GELU)
+					.hidden(5, ActivationFunctionType.GELU)
+					.hidden(4, ActivationFunctionType.GELU)
+					.hidden(3, ActivationFunctionType.GELU)
+					.hidden(3, ActivationFunctionType.GELU)
 					.output(OUT, ActivationFunctionType.SIGMOID)
 					.build();
 
@@ -51,24 +57,6 @@ public class AI {
 			feedForward();
 
 		}
-
-//		try {
-//			nn = NeuralNetwork.load(FILE_SAVE + FILE_EXTENSION);
-//
-//		} catch (Exception e) {
-//			nn = NeuralNetworkBuilder.Builder()
-//					.input(IN)
-//					.hidden(5, ActivationFunctionType.GELU)
-//					.hidden(4, ActivationFunctionType.GELU)
-//					.hidden(3, ActivationFunctionType.GELU)
-//					.hidden(3, ActivationFunctionType.GELU)
-//					.output(OUT, ActivationFunctionType.SIGMOID)
-//					.build();
-//
-//			train();
-//
-//			nn.save(FILE_SAVE + FILE_EXTENSION);
-//		}
 
 	}
 
@@ -88,13 +76,8 @@ public class AI {
 					e.printStackTrace();
 				}
 			}
-
-			if (k%EVALUATION_INTERVAL == 0 && k!=0) {
-				feedForward();
-			}
+			
 		}
-
-		feedForward();
 	}
 
 
@@ -112,29 +95,17 @@ public class AI {
 
 			predictedData.add(new DataPoint(inputType, visualizationType, time, Input.deNormalize(predicted[0], inputType)));
 		}
-
-		Float[] actual = new Float[OUT];
-		int count=0;
-		for (int j=0;j<dataValues.size();j++) {
-			for (int i = 0; i< predictedData.size(); i++) {
-				if (dataValues.get(j).getTimeInt() == predictedData.get(i).getTimeInt()) {
-					actual[0] = Input.normalize(dataValues.get(j).getValue(), inputType);
-					predicted[0] = Input.normalize(predictedData.get(i).getValue(), inputType);
-					mae += NeuralNetwork.calculateMAE(actual, predicted);
-					mse += NeuralNetwork.calculateMSE(actual, predicted);
-					count++;
-				}
-			}
-		}
-
-		mae /= count;
-		mse /= count;
 	}
 
-	public ArrayList<SimpleDataPoint> getPredictedData() {
+	public ArrayList<SimpleDataPoint> getPredictedData(String fromDate) {
 		ArrayList<SimpleDataPoint> simplePredictedData = new ArrayList<>();
-		for (DataPoint data: predictedData)
-			simplePredictedData.add(new SimpleDataPoint(data.getTimeStr(), Math.round(data.getValue() * 100.0) / 100.0));
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime localDateTime = LocalDateTime.parse(fromDate, formatter);
+
+		for (DataPoint data: predictedData) {
+			LocalDateTime updatedDateTime = localDateTime.plusMinutes(data.getTimeInt());
+			simplePredictedData.add(new SimpleDataPoint(updatedDateTime.format(formatter), Math.round(data.getValue() * 100.0) / 100.0));
+		}
 
 		return simplePredictedData;
 	}

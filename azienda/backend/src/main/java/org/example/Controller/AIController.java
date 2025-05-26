@@ -16,28 +16,31 @@ import org.example.ai.neuralNetwork.InputType;
 import org.example.ai.predictor.DataPoint;
 import org.example.ai.predictor.VisualizationType;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AIController {
+    private static final Logger log = LoggerFactory.getLogger(AIController.class);
 
     public static void predictor(@NotNull Context ctx) {
         try {
             ArrayList<DataPoint> data = readFromDB(ctx);
 
             if (data == null) {
-                ctx.status(200);
+                ctx.status(400);
                 ctx.json(Map.of("Error", "Error while fetching form parameters"));
                 return;
             }
 
             AI ai = new AI(data);
             ctx.status(200);
-            ctx.json(Map.of("predicted_temps", ai.getPredictedData()));
+            ctx.json(Map.of("predicted_values", ai.getPredictedData(ctx.formParam("fromDate"))));
         } catch (JWTVerificationException e) {
             ctx.status(400);
             ctx.json(Map.of("Error", "Error while trying to verificate JWT token"));
         } catch (Exception e) {
             ctx.status(400);
-            ctx.json(Map.of("Error", "Error while trying to generate predicted temperatures"));
+            ctx.json(Map.of("Error", "Error while trying to generate predicted values"));
         }
     }
 
@@ -82,8 +85,6 @@ public class AIController {
 
         return data;
     }
-
-
 
     public static ArrayList<DataPoint> generateRandom(InputType inputType, VisualizationType visualizationType) {
         ArrayList<DataPoint> results = new ArrayList<>();
