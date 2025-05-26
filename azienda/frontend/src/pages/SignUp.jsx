@@ -1,78 +1,78 @@
 import '../styles/SignUp.css'
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { SignUpApi, LoginApi} from '../utils/SignUpLogin.js';
+import { SignUpApi, LoginApi } from '../utils/SignUpLogin.js';
 import { UserInfoApi } from '../utils/InformationRequester.js'
 import { Eye, EyeOff } from 'lucide-react';
 import useSignIn from 'react-auth-kit/hooks/useSignIn';
 
 
-export default function Login(){
+export default function Login() {
 
-    const[action,setAction] = useState("Login");
+    const [action, setAction] = useState("Login");
 
-    const[email,setEmail] = useState('');
+    const [email, setEmail] = useState('');
 
-    const[password,setPassword] = useState('');
+    const [password, setPassword] = useState('');
 
-    const[showPassword,setShowPassword] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
-    const[showControl,setShowControl] = useState(false);
+    const [showControl, setShowControl] = useState(false);
 
-    const[control_password,setControl_Password] = useState('');
-    
-    const[email_error,setEmail_Error] = useState('');
+    const [control_password, setControl_Password] = useState('');
 
-    const[password_error,setPassword_Error] = useState('');
+    const [email_error, setEmail_Error] = useState('');
 
-    const[confirm_error,setConfirm_Error] = useState('');
+    const [password_error, setPassword_Error] = useState('');
 
-    const[name,setName] = useState('');
+    const [confirm_error, setConfirm_Error] = useState('');
 
-    const[surname,setSurname] = useState('');
+    const [name, setName] = useState('');
 
-    const[address,setAddress] = useState('');
+    const [surname, setSurname] = useState('');
 
-    const[name_error,setName_Error] = useState('');
+    const [address, setAddress] = useState('');
 
-    const[surname_error,setSurname_Error] = useState('');
+    const [name_error, setName_Error] = useState('');
 
-    const[address_error,setAddress_Error] = useState('');
-     
-    const[return_error,setReturn_Error] = useState('');
+    const [surname_error, setSurname_Error] = useState('');
+
+    const [address_error, setAddress_Error] = useState('');
+
+    const [return_error, setReturn_Error] = useState('');
 
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d?!@#$%^&*]{8,}$/;
 
-    
+
     const navigate = useNavigate();
     const signIn = useSignIn();
 
     const handleSignUp = async () => {
         try {
             const data = await SignUpApi(email, password, control_password, name, surname, address);
-            if (data){
+            if (data) {
                 console.log("Login effettuato:", data);
                 const data2 = await UserInfoApi()
-                if(signIn({
-                        auth: {
-                            token: data.authorization_bearer,
-                            type: 'Bearer'
-                        },
-                        userState: {
-                            name: data.user_info.name,
-                            surname: data.user_info.surname,
-                            email: data.user_info.email,
-                            address: data.user_info.address,
-                            uuid: data.user_info.uuid
-                        }
-                })){
+                if (signIn({
+                    auth: {
+                        token: data.authorization_bearer,
+                        type: 'Bearer'
+                    },
+                    userState: {
+                        name: data.user_info.name,
+                        surname: data.user_info.surname,
+                        email: data.user_info.email,
+                        address: data.user_info.address,
+                        uuid: data.user_info.uuid
+                    }
+                })) {
                     navigate('/profile');
                     window.location.reload();
                 }
             }
-            else{
+            else {
                 setPassword_Error("Errore nei dati di registrazione");
             }
         } catch (error) {
@@ -83,10 +83,10 @@ export default function Login(){
                 setPassword('');
                 setControl_Password('');
             } else {
-                if (!statusCode === 200){
-                        setPassword_Error("Errore imprevisto");
-                        setEmail('');
-                        setPassword('');
+                if (!statusCode === 200) {
+                    setPassword_Error("Errore imprevisto");
+                    setEmail('');
+                    setPassword('');
                 }
             }
         }
@@ -95,22 +95,22 @@ export default function Login(){
     const handleLogin = async () => {
         try {
             const data = await LoginApi(email, password);
-            if (data){
+            if (data) {
                 console.log("Login effettuato:", data);
                 const data2 = await UserInfoApi(data.authorization_bearer);
-                if(signIn({
-                        auth: {
-                            token: data.authorization_bearer,
-                            type: 'Bearer'
-                        },
-                        userState: {
-                            name: data2.user_info.name,
-                            surname: data2.user_info.surname,
-                            email: data2.user_info.email,
-                            address: data2.user_info.address,
-                            uuid: data2.user_info.uuid
-                        }
-                })){
+                if (signIn({
+                    auth: {
+                        token: data.authorization_bearer,
+                        type: 'Bearer'
+                    },
+                    userState: {
+                        name: data2.user_info.name,
+                        surname: data2.user_info.surname,
+                        email: data2.user_info.email,
+                        address: data2.user_info.address,
+                        uuid: data2.user_info.uuid
+                    }
+                })) {
                     navigate('/profile');
                     window.location.reload();
                 }
@@ -123,81 +123,81 @@ export default function Login(){
                 setEmail('')
                 setPassword('')
             } else {
-                if (!statusCode === 200){
-                        setPassword_Error("Errore imprevisto");
-                        setEmail('');
-                        setPassword('');
+                if (!statusCode === 200) {
+                    setPassword_Error("Errore imprevisto");
+                    setEmail('');
+                    setPassword('');
                 }
             }
         }
     }
 
-    const toSingUp = () =>{
-        if(action==="Sign Up"){
+    const toSingUp = () => {
+        if (action === "Sign Up") {
             let control = false;
-            if(email===''){
+            if (email === '') {
                 setEmail_Error('Required field');
-                control=true
+                control = true
             }
-            else{
-                if(!emailRegex.test(email)){
+            else {
+                if (!emailRegex.test(email)) {
                     setEmail_Error('Please enter a valid email address.');
-                    control=true
+                    control = true
                 }
                 else
                     setEmail_Error('');
             };
-            if(password===''){
+            if (password === '') {
                 setPassword_Error('Required field');
-                control=true
+                control = true
             }
-            else{
-                if(!passwordRegex.test(password)){
+            else {
+                if (!passwordRegex.test(password)) {
                     setPassword_Error('Password must be at least 8 characters long, contain at least one uppercase letter and one special character.');
-                    control=true
+                    control = true
                 }
                 else
                     setPassword_Error('');
             };
-            if(control_password===''){
+            if (control_password === '') {
                 setConfirm_Error('Required field')
-                control=true
+                control = true
             }
-            else{
-                if(password!==control_password){
+            else {
+                if (password !== control_password) {
                     setConfirm_Error('Passwords do not match');
-                    control=true
+                    control = true
                 }
                 else
                     setConfirm_Error('');
             }
-            
-            if(name===''){
+
+            if (name === '') {
                 setName_Error('Required field');
-                control=true
+                control = true
             }
-            else{
+            else {
                 setName_Error('');
             }
-            if(surname===''){
+            if (surname === '') {
                 setSurname_Error('Required field');
-                control=true
+                control = true
             }
-            else{
+            else {
                 setSurname_Error('');
             }
-            if(address===''){
+            if (address === '') {
                 setAddress_Error('Required field');
-                control=true
+                control = true
             }
-            else{
+            else {
                 setAddress_Error('');
             }
-            if(control===false){
+            if (control === false) {
                 handleSignUp();
             };
         }
-        else{
+        else {
             setAction("Sign Up");
             setEmail('');
             setPassword('');
@@ -214,40 +214,40 @@ export default function Login(){
             setShowPassword(false);
         };
     };
-    
-    
-    const toLogin = () =>{
-        if(action==="Login"){
+
+
+    const toLogin = () => {
+        if (action === "Login") {
             let control = false;
-            if(email===''){
+            if (email === '') {
                 setEmail_Error('Required field');
                 control = true;
             }
-            else{
-                if(!emailRegex.test(email)){
+            else {
+                if (!emailRegex.test(email)) {
                     setEmail_Error('Please enter a valid email address.');
                     control = true;
                 }
                 else
                     setEmail_Error('');
             };
-            if(password===''){
+            if (password === '') {
                 setPassword_Error('Required field');
                 control = true;
             }
-            else{
-                if(!passwordRegex.test(password)){
+            else {
+                if (!passwordRegex.test(password)) {
                     setPassword_Error('Password must be at least 8 characters long, contain at least one uppercase letter and one special character.');
                     control = true;
                 }
                 else
                     setPassword_Error('');
             };
-            if(control === false){
+            if (control === false) {
                 handleLogin();
             };
         }
-        else{
+        else {
             setAction("Login");
             setEmail('');
             setPassword('');
@@ -262,95 +262,96 @@ export default function Login(){
             setShowControl(false);
         };
     };
-    
 
-    const handleMail = (e) =>{
+
+    const handleMail = (e) => {
         setEmail(e.target.value);
     };
-    const handlePassword = (e) =>{
+    const handlePassword = (e) => {
         setPassword(e.target.value);
     };
-    const toggleShowPassword = () =>setShowPassword(prev=> !prev);
-    const toggleShowConfirm = () =>setShowControl(prevC=> !prevC);
-    const handleControl_Password = (e) =>{
+    const toggleShowPassword = () => setShowPassword(prev => !prev);
+    const toggleShowConfirm = () => setShowControl(prevC => !prevC);
+    const handleControl_Password = (e) => {
         setControl_Password(e.target.value);
     };
-    const handleName = (e) =>{
-        setName(e.target.value);  
+    const handleName = (e) => {
+        setName(e.target.value);
     };
-    const handleSurname = (e) =>{
+    const handleSurname = (e) => {
         setSurname(e.target.value);
     };
-    const handleAddress = (e) =>{
+    const handleAddress = (e) => {
         setAddress(e.target.value);
     };
-    function handleKeyPress(e){
+    function handleKeyPress(e) {
         if (e.key === 'Enter') {
-          if(action==="Login"){
-            toLogin();
-          }
-          else{
-            toSingUp();
-          }
+            if (action === "Login") {
+                toLogin();
+            }
+            else {
+                toSingUp();
+            }
         };
     };
-    window.addEventListener('keydown',handleKeyPress);
-    
+    window.addEventListener('keydown', handleKeyPress);
 
-    return(
+
+    return (
         <>
-        <div className='container'>
-            <div className="second-container">
-                <div className='header'>
-                    <div className='text'>{action}</div>
-                    <div className='underline'></div>
-                </div>
+            <div className='container'>
+                <div className="second-container">
+                    <div className='header'>
+                        <div className='text'>{action}</div>
+                        <div className='underline'></div>
+                    </div>
 
-                <div className='inputs'>
-                    <div className='input'>
-                        <input type='email' value = {email}   onChange={handleMail} placeholder='Email'/>
-                    </div>
-                    {email_error && <div className="error">{email_error}</div>}
-                    <div className='input'>
-                        <input type={showPassword?'text':'password'} value = {password} onChange={handlePassword} placeholder='Password' autoComplete="current-password" className="password-input"/>
-                        <div className="toggle-password" onClick={toggleShowPassword}>
-                            {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                    <div className='inputs'>
+                        <div className='input'>
+                            <input type='email' value={email} onChange={handleMail} placeholder='Email' />
                         </div>
-                    </div>
-                    {password_error && <div className="error">{password_error}</div>}
-                    {return_error && <div className="error">{return_error}</div>}
-                    {action==="Sign Up"&&
-                    <>
-                    <div className='input'>
-                        <input type={showControl?'text':'password'} value = {control_password} onChange={handleControl_Password} placeholder='Confirm Password' className="password-input"/>
-                        <div className="toggle-password" onClick={toggleShowConfirm}>
-                            {showControl ? <Eye size={20} /> : <EyeOff size={20} />}
+                        {email_error && <div className="error">{email_error}</div>}
+                        <div className='input'>
+                            <input type={showPassword ? 'text' : 'password'} value={password} onChange={handlePassword} placeholder='Password' autoComplete="current-password" className="password-input" />
+                            <div className="toggle-password" onClick={toggleShowPassword}>
+                                {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+                            </div>
                         </div>
+                        {password_error && <div className="error">{password_error}</div>}
+                        {return_error && <div className="error">{return_error}</div>}
+                        {action === "Sign Up" &&
+                            <>
+                                <div className='input'>
+                                    <input type={showControl ? 'text' : 'password'} value={control_password} onChange={handleControl_Password} placeholder='Confirm Password' className="password-input" />
+                                    <div className="toggle-password" onClick={toggleShowConfirm}>
+                                        {showControl ? <Eye size={20} /> : <EyeOff size={20} />}
+                                    </div>
+                                </div>
+                                {confirm_error && <div className="error">{confirm_error}</div>}
+                                <div className='input'>
+                                    <input type='text' value={name} onChange={handleName} placeholder='Name' />
+                                </div>
+                                {name_error && <div className="error">{name_error}</div>}
+                                <div className='input'>
+                                    <input type='text' value={surname} onChange={handleSurname} placeholder='Surname' />
+                                </div>
+                                {surname_error && <div className="error">{surname_error}</div>}
+                                <div className='input'>
+                                    <input type='text' value={address} onChange={handleAddress} placeholder='Address' />
+                                </div>
+                                {address_error && <div className="error">{address_error}</div>}
+                            </>
+                        }
                     </div>
-                    {confirm_error && <div className="error">{confirm_error}</div>}
-                    <div className='input'>
-                        <input type='text' value = {name} onChange={handleName} placeholder='Name'/>
-                    </div>
-                    {name_error && <div className="error">{name_error}</div>}
-                    <div className='input'>
-                        <input type='text' value = {surname} onChange={handleSurname} placeholder='Surname'/>
-                    </div>
-                    {surname_error && <div className="error">{surname_error}</div>}
-                    <div className='input'>
-                        <input type='text' value = {address} onChange={handleAddress} placeholder='Address'/>
-                    </div>
-                    {address_error && <div className="error">{address_error}</div>}
-                    </>
-                    }
-                </div>
-                {action==='Login'&&<div className="forgot-password">Lost Password? <span><Link to="/forgot-password" className='linkTag'>Click Here!</Link></span></div>}
+                    {action === 'Login' && <div className="forgot-password">Lost Password? <span><Link to="/forgot-password" className='linkTag'>Click Here!</Link></span></div>}
 
-                <div className="submit-container">
-                    <div className={action==="Login"?"submit gray":"submit"} onClick={toSingUp}>Sign up</div>
-                    <div className={action==="Sign Up"?"submit gray":"submit"} onClick={toLogin}>Login</div>
+                    <div className="submit-container">
+                        <div className={action === "Login" ? "submit gray" : "submit"} onClick={toSingUp}>Sign up</div>
+                        <div className={action === "Sign Up" ? "submit gray" : "submit"} onClick={toLogin}>Login</div>
+                    </div>
                 </div>
-            </div>    
-        </div>
+                
+            </div>
         </>
     );
 };

@@ -10,7 +10,7 @@ export default function Settings() {
     const [showModal, setShowModal] = useState(false);
     const auth = useAuthUser();
 
-    
+
 
     const handleLogoutClick = () => setShowModal(true);
     const confirmLogout = () => {
@@ -50,6 +50,7 @@ export default function Settings() {
                             <div className="submit cancel-button" onClick={cancelLogout}>Annulla</div>
                         </div>
                     </div>
+                    
                 </div>
             )}
         </>
