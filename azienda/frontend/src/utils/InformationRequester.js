@@ -23,8 +23,8 @@ export async function TemperatureAPI(token){
     const formData = new FormData();
     const rawToken = token.replace(/^Bearer\s+/i, '');
     formData.append('token',rawToken);
-    formData.append('fromDate',"2025-05-26-00:00:00")
-    formData.append('toDate',"2025-05-27-00:00:00")
+    formData.append('fromDate',"2025-05-26 00:00:00")
+    formData.append('toDate',"2025-05-27 00:00:00")
 
     try {
         const response = await axios.postForm(url,formData);
@@ -44,8 +44,8 @@ export async function HumidityAPI(token){
     const formData = new FormData();
     const rawToken = token.replace(/^Bearer\s+/i, '');
     formData.append('token',rawToken);
-    formData.append('fromDate',"2025-05-26-00:00:00")
-    formData.append('toDate',"2025-05-27-00:00:00")
+    formData.append('fromDate',"2025-05-26 00:00:00")
+    formData.append('toDate',"2025-05-27 00:00:00")
 
     try {
         const response = await axios.postForm(url,formData);
@@ -65,8 +65,8 @@ export async function Co2API(token){
     const formData = new FormData();
     const rawToken = token.replace(/^Bearer\s+/i, '');
     formData.append('token',rawToken);
-    formData.append('fromDate',"2025-05-26-00:00:00")
-    formData.append('toDate',"2025-05-27-00:00:00")
+    formData.append('fromDate',"2025-05-26 00:00:00")
+    formData.append('toDate',"2025-05-27 00:00:00")
 
     try {
         const response = await axios.postForm(url,formData);
@@ -81,13 +81,14 @@ export async function Co2API(token){
     }
 }
 
-export async function AiApi(token){
-    const url = 'http://trizeta.duckdns.org:10001/ai/predict';
+export async function AiAPI(token,type){
+    const url = 'http://trizeta.duckdns.org:10001/api/ai/predict';
     const formData = new FormData();
     const rawToken = token.replace(/^Bearer\s+/i, '');
     formData.append('token',rawToken);
-    formData.append('fromDate',"2025-05-26-00:00:00")
-    formData.append('toDate',"2025-05-27-00:00:00")
+    formData.append('data_type',type)
+    formData.append('fromDate',"2025-05-26 00:00:00")
+    formData.append('toDate',"2025-05-27 00:00:00")
 
     try {
         const response = await axios.postForm(url,formData);

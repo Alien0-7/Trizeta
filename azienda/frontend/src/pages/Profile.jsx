@@ -11,7 +11,7 @@ import {
 } from "chart.js";
 import { useState, useEffect, useRef } from 'react';
 import { Bar, Doughnut, Line } from "react-chartjs-2";
-import { TemperatureAPI, HumidityAPI, Co2API } from '../utils/InformationRequester'
+import { TemperatureAPI, HumidityAPI, Co2API, AiAPI } from '../utils/InformationRequester'
 import useAuthHeader from 'react-auth-kit/hooks/useAuthHeader';
 import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated'
 
@@ -31,9 +31,12 @@ export default function Profile() {
   const authHeader = useAuthHeader();
   const hasRun = useRef(false);
   const [temperatureData, setTemperatureData] = useState(null);
+  const [temperatureAi, setTemperatureAi] = useState(null);
   const [humidityData, setHumidityData] = useState(null);
+  const [humidityAi, setHumidityAi] = useState(null);
   const [airData, setAirData] = useState(null);
   const [Co2Data, setCo2Data] = useState(null);
+  const [Co2Ai,setCo2Ai] = useState(null);
 
 
 
@@ -64,17 +67,45 @@ export default function Profile() {
       const somma = co2.reduce((accumulatore, elemento) => accumulatore + elemento.value, 0);
       const media = somma / co2.length;
       setAirData(media);
+      const dataAI = await AiAPI(authHeader,'T');
+      const ai = []
+      dataAI.predicted_values.map(item => {
+        const a = parseInt(item.timeStr.split(' ')[1].split(':')[0]) * 60 + parseInt(item.timeStr.split(' ')[1].split(':')[1]);
+        ai.push({ 'timeStr': a, 'value': item.value });
+      });
+      setTemperatureAi(ai);
+      const dataAI2 = await AiAPI(authHeader,'H');
+      const ai2 = []
+      dataAI2.predicted_values.map(item => {
+        const h = parseInt(item.timeStr.split(' ')[1].split(':')[0]) * 60 + parseInt(item.timeStr.split(' ')[1].split(':')[1]);
+        ai2.push({ 'timeStr': h, 'value': item.value });
+      });
+      const aiMap = new Map(ai2.map((d) => [d.timeStr, d.value]));
+      const humidityAiAligned = humidityData.map((entry) => ({
+        value: aiMap.get(entry.timeStr) ?? null,
+      }));
+      setHumidityAi(humidityAiAligned);
+      const dataAI3 = await AiAPI(authHeader,'C');
+      const ai3 = []
+      dataAI3.predicted_values.map(item => {
+        const c = parseInt(item.timeStr.split(' ')[1].split(':')[0]) * 60 + parseInt(item.timeStr.split(' ')[1].split(':')[1]);
+        ai3.push({ 'timeStr': c, 'value': item.value });
+      });
+      setCo2Ai(ai3);
     }
     fetchData();
     hasRun.current = true;
   }, []);
 
+  //const humidityAiFull = humidityData.map((entry, index) =>
+  //humidityAi[index] ? humidityAi[index] : { value: null }
+  //);
 
   return (
     <>
       <div className="graphs-wrapper">
         <div className="graphContainer">
-          {temperatureData && (
+          {temperatureData && temperatureAi && (
             <div id='temperature'>
               <h3 className="card-title">Temperature</h3>
               <Line
@@ -86,6 +117,12 @@ export default function Profile() {
                       data: temperatureData.map((data) => data.value * 1),
                       backgroundColor: "#064FF0",
                       borderColor: "#064FF0",
+                    },
+                    {
+                      label: "TemperatureAI",
+                      data: temperatureAi.map((data) => data.value * 1),
+                      backgroundColor: "#00C49F",
+                      borderColor: "#00C49F",
                     },
                   ],
                 }}
@@ -110,7 +147,6 @@ export default function Profile() {
                   scales: {
                     x: {
                       type: 'category',
-                      labels: temperatureData.map((data) => data.timeStr),
                     },
                     y: {
                       type: 'linear',
@@ -125,7 +161,7 @@ export default function Profile() {
         </div>
 
         <div className="graphContainer">
-          {humidityData && (
+          {humidityData &&  humidityAi &&(
             <div id='humidity'>
               <h3 className="card-title">Humidity</h3>
               <Line
@@ -137,6 +173,12 @@ export default function Profile() {
                       data: humidityData.map((data) => data.value * 1),
                       backgroundColor: "#064FF0",
                       borderColor: "#064FF0",
+                    },
+                    {
+                      label: "HumidityAI",
+                      data: humidityAi.map((data) => data.value * 1),
+                      backgroundColor: "#00C49F",
+                      borderColor: "#00C49F",
                     },
                   ],
                 }}
@@ -161,7 +203,6 @@ export default function Profile() {
                   scales: {
                     x: {
                       type: 'category',
-                      labels: humidityData.map((data) => data.timeStr),
                     },
                     y: {
                       type: 'linear',
@@ -174,7 +215,7 @@ export default function Profile() {
             </div>
           )}
         </div><div className="graphContainer">
-          {Co2Data && (
+          {Co2Data && Co2Ai &&(
             <div id='Co2'>
               <h3 className="card-title">Co2</h3>
               <Line
@@ -186,6 +227,12 @@ export default function Profile() {
                       data: Co2Data.map((data) => data.value * 1),
                       backgroundColor: "#064FF0",
                       borderColor: "#064FF0",
+                    },
+                    {
+                      label: "Co2AI",
+                      data: Co2Ai.map((data) => data.value * 1),
+                      backgroundColor: "#00C49F",
+                      borderColor: "#00C49F",
                     },
                   ],
                 }}
@@ -210,7 +257,6 @@ export default function Profile() {
                   scales: {
                     x: {
                       type: 'category',
-                      labels: Co2Data.map((data) => data.timeStr),
                     },
                     y: {
                       type: 'linear',
