@@ -43,10 +43,27 @@ export default function Profile() {
       const data = await TemperatureAPI(authHeader);
       const temp = []
       data.temperature.map(item => {
-        const t = parseInt(item.time.split(' ')[1].split(':')[0]) * 60 + parseInt(item.time.split(' ')[1].split(':')[1]);
-        temp.push({ 'time': t, 'value': item.value });
+        const t = parseInt(item.timeStr.split(' ')[1].split(':')[0]) * 60 + parseInt(item.timeStr.split(' ')[1].split(':')[1]);
+        temp.push({ 'timeStr': t, 'value': item.value });
       });
       setTemperatureData(temp);
+      const data2 = await HumidityAPI(authHeader);
+      const humid = []
+      data2.humidity.map(item => {
+        const h = parseInt(item.timeStr.split(' ')[1].split(':')[0]) * 60 + parseInt(item.timeStr.split(' ')[1].split(':')[1]);
+        humid.push({ 'timeStr': h, 'value': item.value });
+      });
+      setHumidityData(humid);
+      const data3 = await Co2API(authHeader);
+      const co2 = []
+      data3.Co2.map(item => {
+        const c = parseInt(item.timeStr.split(' ')[1].split(':')[0]) * 60 + parseInt(item.timeStr.split(' ')[1].split(':')[1]);
+        co2.push({ 'timeStr': c, 'value': item.value });
+      });
+      setCo2Data(co2);
+      const somma = co2.reduce((accumulatore, elemento) => accumulatore + elemento.value, 0);
+      const media = somma/co2.length;
+      setAirData(media);
     }
     fetchData();
     hasRun.current = true;
@@ -62,7 +79,7 @@ export default function Profile() {
               <h3 className="card-title">Temperature</h3>
               <Line
                 data={{
-                  labels: temperatureData.map((data) => data.time),
+                  labels: temperatureData.map((data) => data.timeStr),
                   datasets: [
                     {
                       label: "Temperature",
@@ -87,18 +104,18 @@ export default function Profile() {
                       },
                     },
                     legend: {
-                      display: false, // niente etichetta "undefined"
+                      display: false, 
                     },
                   },
                   scales: {
                     x: {
                       type: 'category',
-                      labels: temperatureData.map((data) => data.time),
+                      labels: temperatureData.map((data) => data.timeStr),
                     },
                     y: {
                       type: 'linear',
-                      min: 26,
-                      max: 27,
+                      min: 25,
+                      max: 30,
                     },
                   },
                 }}
@@ -108,16 +125,16 @@ export default function Profile() {
         </div>
 
         <div className="graphContainer">
-          {temperatureData && (
-            <div id='temperature'>
-              <h3 className="card-title">Temperature</h3>
+          {humidityData && (
+            <div id='humidity'>
+              <h3 className="card-title">Humidity</h3>
               <Line
                 data={{
-                  labels: temperatureData.map((data) => data.time),
+                  labels: humidityData.map((data) => data.timeStr),
                   datasets: [
                     {
-                      label: "Temperature",
-                      data: temperatureData.map((data) => data.value * 1),
+                      label: "Humidity",
+                      data: humidityData.map((data) => data.value * 1),
                       backgroundColor: "#064FF0",
                       borderColor: "#064FF0",
                     },
@@ -133,23 +150,23 @@ export default function Profile() {
                     tooltip: {
                       callbacks: {
                         label: function (tooltipItem) {
-                          return `${tooltipItem.raw}°C`;
+                          return `${tooltipItem.raw}%`;
                         },
                       },
                     },
                     legend: {
-                      display: false, // niente etichetta "undefined"
+                      display: false, 
                     },
                   },
                   scales: {
                     x: {
                       type: 'category',
-                      labels: temperatureData.map((data) => data.time),
+                      labels: humidityData.map((data) => data.timeStr),
                     },
                     y: {
                       type: 'linear',
-                      min: 26,
-                      max: 27,
+                      min: 0,
+                      max: 100,
                     },
                   },
                 }}
@@ -157,16 +174,16 @@ export default function Profile() {
             </div>
           )}
         </div><div className="graphContainer">
-          {temperatureData && (
-            <div id='temperature'>
-              <h3 className="card-title">Temperature</h3>
+          {Co2Data && (
+            <div id='Co2'>
+              <h3 className="card-title">Co2</h3>
               <Line
                 data={{
-                  labels: temperatureData.map((data) => data.time),
+                  labels: Co2Data.map((data) => data.timeStr),
                   datasets: [
                     {
                       label: "Temperature",
-                      data: temperatureData.map((data) => data.value * 1),
+                      data: Co2Data.map((data) => data.value * 1),
                       backgroundColor: "#064FF0",
                       borderColor: "#064FF0",
                     },
@@ -182,23 +199,23 @@ export default function Profile() {
                     tooltip: {
                       callbacks: {
                         label: function (tooltipItem) {
-                          return `${tooltipItem.raw}°C`;
+                          return `${tooltipItem.raw}PPM`;
                         },
                       },
                     },
                     legend: {
-                      display: false, // niente etichetta "undefined"
+                      display: false, 
                     },
                   },
                   scales: {
                     x: {
                       type: 'category',
-                      labels: temperatureData.map((data) => data.time),
+                      labels: Co2Data.map((data) => data.timeStr),
                     },
                     y: {
                       type: 'linear',
-                      min: 26,
-                      max: 27,
+                      min: 0,
+                      max: 1500,
                     },
                   },
                 }}
@@ -206,64 +223,12 @@ export default function Profile() {
             </div>
           )}
         </div><div className="graphContainer">
-          {temperatureData && (
-            <div id='temperature'>
-              <h3 className="card-title">Temperature</h3>
-              <Line
-                data={{
-                  labels: temperatureData.map((data) => data.time),
-                  datasets: [
-                    {
-                      label: "Temperature",
-                      data: temperatureData.map((data) => data.value * 1),
-                      backgroundColor: "#064FF0",
-                      borderColor: "#064FF0",
-                    },
-                  ],
-                }}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  plugins: {
-                    title: {
-                      display: false,
-                    },
-                    tooltip: {
-                      callbacks: {
-                        label: function (tooltipItem) {
-                          return `${tooltipItem.raw}°C`;
-                        },
-                      },
-                    },
-                    legend: {
-                      display: false, // niente etichetta "undefined"
-                    },
-                  },
-                  scales: {
-                    x: {
-                      type: 'category',
-                      labels: temperatureData.map((data) => data.time),
-                    },
-                    y: {
-                      type: 'linear',
-                      min: 26,
-                      max: 27,
-                    },
-                  },
-                }}
-              />
+          {airData && (
+            <div id = "Air">
+              
             </div>
           )}
-        </div>
-
-
-
-
-        {/*          {humidityData && <div id='humidity'>{"Humidity"}</div>}
-          {airData && <div id='airquality'>{"Air quality"}</div>}
-          {Co2Data && <div id='co2'>{"Co2"}</div>}     */}
-
-        
+        </div>        
       </div>
     </>
   );
