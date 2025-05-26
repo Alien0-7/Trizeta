@@ -4,17 +4,18 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.example.ai.common.NumberController;
+import org.example.ai.common.RandomSingleton;
 
-public class Neurone implements Serializable {
+public class Neuron implements Serializable {
 	public static int N = 0;
 	
 	private int id;
 	protected ActivationFunctionType activationFunctionType;
-	protected ArrayList<Arco> previous, next;
-
+	protected ArrayList<Connection> previous, next;
+	
 	private float lastOutputX, lastOutputY, error;
 
-	public Neurone(ActivationFunctionType activationFunctionType) {
+	public Neuron(ActivationFunctionType activationFunctionType) {
 		this.activationFunctionType = activationFunctionType;
 		id = N;
 		N++;
@@ -22,28 +23,39 @@ public class Neurone implements Serializable {
 		next = new ArrayList<>();
 	}
 
-	public ArrayList<Arco> getPrevious() {
+	public ArrayList<Connection> getPrevious() {
 		return previous;
 	}
 
-	public ArrayList<Arco> getNext() {
+	public ArrayList<Connection> getNext() {
 		return next;
 	}
 
 	protected Float evaluate() {
-		float f = 0;
+		if(NeuralNetworkSettings.getUseDropout()) {
+			if(RandomSingleton.random() < NeuralNetworkSettings.getDropoutRate()) {
+				return 0f;
+			}
+		}
+		
+		float sum = 0;
 		for(int i=0;i<previous.size();i++) {
-			f += previous.get(i).getWeight()*previous.get(i).getFrom().evaluate();
+			sum += previous.get(i).getWeight()*previous.get(i).getFrom().evaluate();
 		}
 
-		lastOutputX = f;
-		lastOutputY = NeuralNetworkSettings.activationFuncion(activationFunctionType, f);
+		lastOutputX = sum;
+		lastOutputY = NeuralNetworkSettings.activationFunction(activationFunctionType, sum);
 		
 		lastOutputY = NumberController.check(lastOutputY, 4);
+		
+		if(NeuralNetworkSettings.getUseDropout()) 	 {
+		    lastOutputY *= 1 / (1 - NeuralNetworkSettings.getDropoutRate());  // Scala l'output per compensare il dropout nel training
+		}
+		
  		return lastOutputY;
 	}
 
-	public Float getLastOutputY() {
+	private Float getLastOutputY() {
 		return lastOutputY;
 	}
 
@@ -65,21 +77,21 @@ public class Neurone implements Serializable {
 		return activationFunctionType;
 	}
 
-	public void addNext(Arco a) {
+	public void addNext(Connection a) {
 		next.add(a);
 	}
 
-	public void addPrevious(Arco a) {
+	public void addPrevious(Connection a) {
 		previous.add(a);
 	}
 	
 	public String toString() {
 		String p ="";
 		String n ="";
-		for(Arco a : previous) {
+		for(Connection a : previous) {
 			p += a.toString();
 		}
-		for(Arco a : next) {
+		for(Connection a : next) {
 			n += a.toString();
 		}
 		return getClass().getName()+ " id: " + id + "\nPrev: " + p +"\nNext: "+ n;
@@ -92,5 +104,6 @@ public class Neurone implements Serializable {
 	public Float getLastOutput() {
 		return getLastOutputY();
 	}
+
 
 }

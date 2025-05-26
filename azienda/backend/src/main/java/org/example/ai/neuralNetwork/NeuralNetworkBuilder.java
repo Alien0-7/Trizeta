@@ -41,5 +41,5 @@ public class NeuralNetworkBuilder {
 		
 		return nn;
 	}
-
+	
 }

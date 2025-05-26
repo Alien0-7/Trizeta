@@ -1,9 +1,12 @@
 package org.example.Controller;
 
 
-import org.example.Utils.Measurement;
+import org.example.Utils.SimpleDataPoint;
+import org.example.ai.predictor.DataPoint;
 import org.example.Utils.User;
 import org.example.Utils.UUIDUtils;
+import org.example.ai.neuralNetwork.InputType;
+import org.example.ai.predictor.VisualizationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -317,14 +320,14 @@ public class DatabaseController {
         return null;
     }
 
-    public static ArrayList<Measurement> getUserMeasurements(String typeGiven, String userUUID, String fromDate , String toDate) {
+    public static ArrayList<SimpleDataPoint> getUserMeasurements(String typeGiven, String userUUID, String fromDate , String toDate) {
         try {
             Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
             log.info("Connesso con il DataBase");
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("Select * from "+table_user+";");
             boolean found = false;
-            ArrayList<Measurement> measurements = new ArrayList<>();
+            ArrayList<SimpleDataPoint> data = new ArrayList<>();
 
             while (rs.next()) {
 
@@ -343,7 +346,7 @@ public class DatabaseController {
                 while (rs.next()) {
                     double value = rs.getDouble("value");
                     String time = rs.getString("time_measurement");
-                    measurements.add(new Measurement(time, value));
+                    data.add(new SimpleDataPoint(time, value));
 
                 }
 
@@ -351,7 +354,7 @@ public class DatabaseController {
                 stmt.close();
                 connection.close();
                 log.info("Connessione chiusa con successo, Trasferimento effettuato");
-                return measurements;
+                return data;
 
             }else{
 
