@@ -62,15 +62,17 @@ public class ArduinoController {
         String type = ctx.formParam("actuator_type");
         int room = Integer.valueOf(ctx.formParam("room"));
 
-        boolean uuidExists = DatabaseController.toggle_ventola(uuid, type, room);
+        boolean actuator = DatabaseController.toggle_ventola(uuid, type, room);
 
-        if(uuidExists) {
+        if(actuator) {
 
             ctx.status(200);
+            ctx.json(Map.of("toggle_actuator", actuator));
 
-        } else if(!uuidExists) {
+        } else if(!actuator) {
 
             ctx.status(400);
+            ctx.json(Map.of("toggle_actuator", actuator));
 
         } else {
 
