@@ -10,6 +10,7 @@ import org.example.ai.predictor.VisualizationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -373,6 +374,97 @@ public class DatabaseController {
         return null;
     }
 
+    public static Boolean toggle_actuator(String userUUID, boolean status, String  room , String type, int fk_room) {
+        try {
+            Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
+            log.info("Connesso con il DataBase");
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("Select * from "+table_user+";");
+            String email = "";
+            String id_room = "";
+            int count = 0;
+
+            while (rs.next()) {
+
+                String uuid2 = UUIDUtils.bytesToUUID(rs.getBytes(columnUUID)).toString();
+
+                email = rs.getString(columnEmail);
+
+                if (userUUID.equals(uuid2)) {
+
+                    rs = stmt.executeQuery("Select * from "+table_room+";");
+
+                    while (rs.next()) {
+
+                        if(room.equalsIgnoreCase(rs.getString(columnName_room)) && email.equalsIgnoreCase(rs.getString(columnFk_email_room)) && type.equalsIgnoreCase(rs.getString("type"))){
+
+                            id_room = rs.getString(columnId_room_room);
+
+                            int rows = stmt.executeUpdate(" update "+table_actuator+" set status = " + status +"where fk_rooom = "+fk_room+";");
+
+                            if (rows > 0) {
+
+                                log.info("Inserimento riuscito di " + rows + " righe");
+                                return true;
+
+                            }
+
+                        } else if(room.equalsIgnoreCase(rs.getString(columnName_room)) && email.equalsIgnoreCase(rs.getString(columnFk_email_room))) {
+
+                            id_room = rs.getString(columnId_room_room);
+
+                            int rows = stmt.executeUpdate("insert into "+table_actuator+"("+"type" + ", "+ "status" +", "+ "fk_room" +") " +
+                                    "values('"+ type + "', '"+status+"', '"+id_room+"');");
+
+                            rows = stmt.executeUpdate(" update "+table_actuator+" set status = " + status +"where fk_rooom = "+fk_room+";");
+
+                            if (rows > 0) {
+
+                                log.info("Inserimento riuscito di " + rows + " righe");
+                                return true;
+
+                            }
+
+                        }
+
+                        count++;
+
+                    }
+
+                    int rows = stmt.executeUpdate("insert into "+table_room+"("+columnName_room+", " +"floor"+", "+columnFk_email_room +") " +
+                            "values('"+ room +"', '"+1+"', '"+email+"');");
+
+                    rows = stmt.executeUpdate("insert into "+table_actuator+"("+"type" + ", "+ "status" +", "+ "fk_room" +") " +
+                            "values('"+ type + "', '"+status+"', '"+id_room+"');");
+
+                    rows = stmt.executeUpdate(" update "+table_actuator+" set status = " + status +"where fk_rooom = "+fk_room+";");
+
+                    if (rows > 0) {
+
+                        log.info("Inserimento riuscito di " + rows + " righe");
+                        return true;
+
+                    }
+
+                }
+
+                return false;
+
+            }
+
+            rs.close();
+            stmt.close();
+            connection.close();
+
+            log.info("Connessione chiusa con successo");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
+        }
+
+        return false;
+    }
+
     public static Boolean uuidExists(String uuid) {
 
         try {
@@ -401,6 +493,62 @@ public class DatabaseController {
             connection.close();
 
             log.info("Connessione chiusa con successo");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
+        }
+
+        return false;
+    }
+
+    public static Boolean toggle_ventola(String uuid, String type, int room) {
+
+        try {
+            Connection connection = DriverManager.getConnection(url, DBUser, DBPassword);
+            log.info("Connesso con il DataBase");
+            Statement stmt = connection.createStatement();
+            boolean found = false;
+            ResultSet rs = stmt.executeQuery("Select * from "+table_user+";");
+
+            while (rs.next()) {
+
+                String uuid2 = UUIDUtils.bytesToUUID(rs.getBytes(columnUUID)).toString();
+
+                log.info(uuid2);
+
+                if (uuid.equals(uuid2)) {
+
+                    log.info("UUID trovato");
+                    found = true;
+
+                }
+
+            }
+
+            if(found){
+                rs = stmt.executeQuery("Select * from "+table_measurement+" WHERE type = '"+type+"' AND fk_room = '"+ room +"';");
+
+                while (rs.next()) {
+
+                    boolean value= rs.getBoolean("status");
+
+                }
+
+                rs.close();
+                stmt.close();
+                connection.close();
+                log.info("Connessione chiusa con successo, Trasferimento effettuato");
+                return true;
+
+            }else{
+
+                rs.close();
+                stmt.close();
+                connection.close();
+                log.info("Connessione chiusa con successo, Utente non trovato");
+
+            }
+
         } catch (Exception e) {
             log.error(e.getMessage());
             return null;

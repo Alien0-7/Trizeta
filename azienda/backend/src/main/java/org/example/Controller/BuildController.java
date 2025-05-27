@@ -116,5 +116,51 @@ public class BuildController {
 
     }
 
+    public static void actuator(@NotNull Context ctx) {
+
+        String room = "bagno";
+        int fk_room = 3;
+        String type = "ventola";
+        String SECRET_KEY = "passwordSicuraSegreta";
+        String ISSUER = DatabaseController.getIssuer();
+
+        String token = ctx.formParam("token");
+        boolean status = Boolean.valueOf(ctx.formParam("toggle_actuator"));
+
+        try {
+
+            Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
+
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer(ISSUER)
+                    .build();
+
+            DecodedJWT jwt = verifier.verify(token);
+
+            boolean actuator = DatabaseController.toggle_actuator(jwt.getClaim("uuid").asString(), status, room, type,fk_room);
+
+            if(actuator){
+
+                ctx.status(200);
+
+            } else if (!actuator) {
+
+                ctx.status(400);
+
+            }else {
+
+                ctx.status(500);
+
+            }
+
+        } catch (JWTVerificationException e) {
+
+            ctx.status(400);
+            ctx.json(Map.of("Error", "Token JWT invalido"));
+
+        }
+
+    }
+
 
 }

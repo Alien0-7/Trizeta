@@ -57,6 +57,28 @@ public class ArduinoController {
         }
     }
 
+    public static void actuator(@NotNull Context ctx) {
+        String uuid = ctx.formParam("uuid");
+        String type = ctx.formParam("actuator_type");
+        int room = Integer.valueOf(ctx.formParam("room"));
+
+        boolean uuidExists = DatabaseController.toggle_ventola(uuid, type, room);
+
+        if(uuidExists) {
+
+            ctx.status(200);
+
+        } else if(!uuidExists) {
+
+            ctx.status(400);
+
+        } else {
+
+            ctx.status(500);
+
+        }
+    }
+
     public static void addArduino(@NotNull Context ctx) {
         ctx.status(501);
 

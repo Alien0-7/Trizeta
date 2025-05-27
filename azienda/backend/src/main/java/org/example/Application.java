@@ -23,12 +23,14 @@ public class Application {
                         post("/temperature", BuildController::getTemperature);
                         post("/humidity", BuildController::getHumidity);
                         post("/co2", BuildController::getCO2);
+                        post("/toggle_actuator", BuildController::actuator);
 
                         path("/arduino", () -> {
                             post("/ping",ArduinoController::ping);
                             post("/register", ArduinoController::registerArduino);
                             post("/add", ArduinoController::addData);
                             post("/generate", ArduinoController::addArduino);
+                            post("/actuator", ArduinoController::addArduino);
 
                         });
                         path("/ai", () -> {
