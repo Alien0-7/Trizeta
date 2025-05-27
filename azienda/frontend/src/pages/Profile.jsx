@@ -11,7 +11,7 @@ import {
 } from "chart.js";
 import { useState, useEffect, useRef } from 'react';
 import { Bar, Doughnut, Line } from "react-chartjs-2";
-import { TemperatureAPI, HumidityAPI, Co2API, AiAPI } from '../utils/InformationRequester'
+import { TemperatureAPI, HumidityAPI, Co2API, AiAPI, ButtonAPI } from '../utils/InformationRequester'
 import useAuthHeader from 'react-auth-kit/hooks/useAuthHeader';
 import useIsAuthenticated from 'react-auth-kit/hooks/useIsAuthenticated'
 
@@ -36,8 +36,22 @@ export default function Profile() {
   const [humidityAi, setHumidityAi] = useState(null);
   const [airData, setAirData] = useState(null);
   const [Co2Data, setCo2Data] = useState(null);
-  const [Co2Ai,setCo2Ai] = useState(null);
+  const [Co2Ai, setCo2Ai] = useState(null);
 
+  const toAPI = () => {
+    const box = document.getElementById('statusBox');
+    if (box.classList.contains('off')) {
+      box.classList.remove('off');
+      box.classList.add('on');
+      box.textContent = 'ON';
+      //ButtonAPI(authHeader,'true');
+    } else {
+      box.classList.remove('on');
+      box.classList.add('off');
+      box.textContent = 'OFF';
+      //ButtonAPI(authHeader,'false');
+    }
+  }
 
 
   useEffect(() => {
@@ -67,39 +81,48 @@ export default function Profile() {
       const somma = co2.reduce((accumulatore, elemento) => accumulatore + elemento.value, 0);
       const media = somma / co2.length;
       setAirData(media);
-      const dataAI = await AiAPI(authHeader,'T');
+
+      const dataAI = await AiAPI(authHeader, 'T');
       const ai = []
       dataAI.predicted_values.map(item => {
         const a = parseInt(item.timeStr.split(' ')[1].split(':')[0]) * 60 + parseInt(item.timeStr.split(' ')[1].split(':')[1]);
         ai.push({ 'timeStr': a, 'value': item.value });
       });
-      setTemperatureAi(ai);
-      const dataAI2 = await AiAPI(authHeader,'H');
+      const aiMap = new Map(ai.map((d) => [d.timeStr, d.value]));
+      const temperatureAiAligned = temp.map((entry) => ({
+        value: aiMap.get(entry.timeStr) ?? null,
+      }))
+      setTemperatureAi(temperatureAiAligned);
+
+      const dataAI2 = await AiAPI(authHeader, 'H');
       const ai2 = []
       dataAI2.predicted_values.map(item => {
         const h = parseInt(item.timeStr.split(' ')[1].split(':')[0]) * 60 + parseInt(item.timeStr.split(' ')[1].split(':')[1]);
         ai2.push({ 'timeStr': h, 'value': item.value });
       });
-      const aiMap = new Map(ai2.map((d) => [d.timeStr, d.value]));
-      const humidityAiAligned = humidityData.map((entry) => ({
-        value: aiMap.get(entry.timeStr) ?? null,
-      }));
+      const aiMap1 = new Map(ai2.map((d) => [d.timeStr, d.value]));
+      const humidityAiAligned = humid.map((entry) => ({
+        value: aiMap1.get(entry.timeStr) ?? null,
+      }))
       setHumidityAi(humidityAiAligned);
-      const dataAI3 = await AiAPI(authHeader,'C');
+
+
+      const dataAI3 = await AiAPI(authHeader, 'C');
       const ai3 = []
       dataAI3.predicted_values.map(item => {
         const c = parseInt(item.timeStr.split(' ')[1].split(':')[0]) * 60 + parseInt(item.timeStr.split(' ')[1].split(':')[1]);
         ai3.push({ 'timeStr': c, 'value': item.value });
       });
-      setCo2Ai(ai3);
+      const aiMap2 = new Map(ai3.map((d) => [d.timeStr, d.value]));
+      const Co2AiAligned = co2.map((entry) => ({
+        value: aiMap2.get(entry.timeStr) ?? null,
+      }))
+      setCo2Ai(Co2AiAligned);
     }
     fetchData();
     hasRun.current = true;
   }, []);
 
-  //const humidityAiFull = humidityData.map((entry, index) =>
-  //humidityAi[index] ? humidityAi[index] : { value: null }
-  //);
 
   return (
     <>
@@ -114,19 +137,20 @@ export default function Profile() {
                   datasets: [
                     {
                       label: "Temperature",
-                      data: temperatureData.map((data) => data.value * 1),
+                      data: temperatureData.map((data) => data.value),
                       backgroundColor: "#064FF0",
                       borderColor: "#064FF0",
                     },
                     {
                       label: "TemperatureAI",
-                      data: temperatureAi.map((data) => data.value * 1),
+                      data: temperatureAi.map((data) => data.value),
                       backgroundColor: "#00C49F",
                       borderColor: "#00C49F",
                     },
                   ],
                 }}
                 options={{
+                  spanGaps: true,
                   responsive: true,
                   maintainAspectRatio: false,
                   plugins: {
@@ -141,7 +165,7 @@ export default function Profile() {
                       },
                     },
                     legend: {
-                      display: false,
+                      display: true,
                     },
                   },
                   scales: {
@@ -161,7 +185,7 @@ export default function Profile() {
         </div>
 
         <div className="graphContainer">
-          {humidityData &&  humidityAi &&(
+          {humidityData && humidityAi && (
             <div id='humidity'>
               <h3 className="card-title">Humidity</h3>
               <Line
@@ -170,19 +194,20 @@ export default function Profile() {
                   datasets: [
                     {
                       label: "Humidity",
-                      data: humidityData.map((data) => data.value * 1),
+                      data: humidityData.map((data) => data.value),
                       backgroundColor: "#064FF0",
                       borderColor: "#064FF0",
                     },
                     {
                       label: "HumidityAI",
-                      data: humidityAi.map((data) => data.value * 1),
+                      data: humidityAi.map((data) => data.value),
                       backgroundColor: "#00C49F",
                       borderColor: "#00C49F",
                     },
                   ],
                 }}
                 options={{
+                  spanGaps: true,
                   responsive: true,
                   maintainAspectRatio: false,
                   plugins: {
@@ -197,7 +222,7 @@ export default function Profile() {
                       },
                     },
                     legend: {
-                      display: false,
+                      display: true,
                     },
                   },
                   scales: {
@@ -215,7 +240,7 @@ export default function Profile() {
             </div>
           )}
         </div><div className="graphContainer">
-          {Co2Data && Co2Ai &&(
+          {Co2Data && Co2Ai && (
             <div id='Co2'>
               <h3 className="card-title">Co2</h3>
               <Line
@@ -223,20 +248,22 @@ export default function Profile() {
                   labels: Co2Data.map((data) => data.timeStr),
                   datasets: [
                     {
-                      label: "Temperature",
-                      data: Co2Data.map((data) => data.value * 1),
+                      label: "Co2",
+                      data: Co2Data.map((data) => data.value),
                       backgroundColor: "#064FF0",
                       borderColor: "#064FF0",
                     },
                     {
                       label: "Co2AI",
-                      data: Co2Ai.map((data) => data.value * 1),
+                      data: Co2Ai.map((data) => data.value),
                       backgroundColor: "#00C49F",
                       borderColor: "#00C49F",
+                      spanGaps: false,
                     },
                   ],
                 }}
                 options={{
+                  spanGaps: true,
                   responsive: true,
                   maintainAspectRatio: false,
                   plugins: {
@@ -251,7 +278,7 @@ export default function Profile() {
                       },
                     },
                     legend: {
-                      display: false,
+                      display: true,
                     },
                   },
                   scales: {
@@ -289,8 +316,9 @@ export default function Profile() {
                 ))}
             </div>
           )}
-
         </div>
+        <button onClick={toAPI}>Fan</button>
+        <div id="statusBox" className="status-box off">OFF</div>
       </div>
     </>
   );

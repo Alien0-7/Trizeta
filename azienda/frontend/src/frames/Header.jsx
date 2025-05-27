@@ -13,7 +13,7 @@ export default function Header() {
                 <Link to="/" className='linkTag'>
                     <ul id="logo-container">
                         <li><img id="logo" src={reactLogo} alt="logo"/></li>
-                        <li><p>Karim & co.</p></li>
+                        <li><p>HomeTech</p></li>
                     </ul>
                 </Link>
                 

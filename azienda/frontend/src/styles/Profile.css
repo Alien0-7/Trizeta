@@ -117,3 +117,45 @@ html, body {
 .yellow { background-color: #FFD700; color: black; }
 .red { background-color: #FF6347; }
 .purple { background-color: #8A2BE2; }
+
+.status-box {
+  width: 50%;             
+  height: 45px;            
+  position: relative;
+  left: 63%;              
+  transform: translateX(-75%);
+  border-radius: 50px;     
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+  background-color: #dc3545; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  cursor: default;
+  transition: background-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.status-box.on {
+  background-color: #28a745; 
+}
+
+.status-box.off {
+  background-color: #dc3545;
+}
+
+button {
+  width: 50%;
+  height: 45px;
+  color: #23272F;
+  background-color: aqua;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  margin: 0 auto;
+  display: block;
+}

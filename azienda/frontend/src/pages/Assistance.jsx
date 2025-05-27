@@ -7,7 +7,7 @@ export default function Assistance() {
         <div className="assistance">
           <h1>Assistenza</h1>
           <p>Hai una domanda o un problema? Il nostro Centro Assistenza è sempre al tuo fianco, pronto a risolvere ogni esigenza con rapidità e professionalità. </p>
-          <button>vai al centro assistenza</button>
+          <button>Assistenza</button>
         </div>
         <div className="contacts">
           <h1>Contattaci</h1>
