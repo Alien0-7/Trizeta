@@ -1,12 +1,13 @@
-import axios from axios
+import axios from "axios"
 
-export async function UserInfoApi(){
+export async function UserInfoApi(token){
     const url = 'http://trizeta.duckdns.org:10001/api/getuserinfo';
-    const formData = new FormData();
+    const formData = new FormData()
+    formData.append('token',token);
 
     try {
         const response = await axios.postForm(url,formData);
-        console.log("Dati ricevuti:", response.data);
+        console.log("Dati utente ricevuti:", response.data);
         return response.data;
 
     } catch (error) {
@@ -15,13 +16,15 @@ export async function UserInfoApi(){
         console.log('Dettagli errore:', error.message || error);
         throw error;
     }
-
 }
 
-export async function TemperatureAPI(){
+export async function TemperatureAPI(token){
     const url = 'http://trizeta.duckdns.org:10001/api/temperature';
     const formData = new FormData();
-
+    const rawToken = token.replace(/^Bearer\s+/i, '');
+    formData.append('token',rawToken);
+    formData.append('fromDate',"2025-05-26 08:00:00")
+    formData.append('toDate',"2025-05-27 08:00:00")
 
     try {
         const response = await axios.postForm(url,formData);
@@ -36,10 +39,13 @@ export async function TemperatureAPI(){
     }
 }
 
-export async function HumidityAPI(){
+export async function HumidityAPI(token){
     const url = 'http://trizeta.duckdns.org:10001/api/humidity';
     const formData = new FormData();
-
+    const rawToken = token.replace(/^Bearer\s+/i, '');
+    formData.append('token',rawToken);
+    formData.append('fromDate',"2025-05-26 08:00:00")
+    formData.append('toDate',"2025-05-27 08:00:00")
 
     try {
         const response = await axios.postForm(url,formData);
@@ -54,10 +60,13 @@ export async function HumidityAPI(){
     }
 }
 
-export async function Co2API(){
+export async function Co2API(token){
     const url = 'http://trizeta.duckdns.org:10001/api/co2';
     const formData = new FormData();
-
+    const rawToken = token.replace(/^Bearer\s+/i, '');
+    formData.append('token',rawToken);
+    formData.append('fromDate',"2025-05-26 08:00:00")
+    formData.append('toDate',"2025-05-27 08:00:00")
 
     try {
         const response = await axios.postForm(url,formData);
@@ -72,16 +81,38 @@ export async function Co2API(){
     }
 }
 
-export async function AiApi(){
-    const url = 'http://trizeta.duckdns.org:10001/ai/predict';
+export async function AiAPI(token,type){
+    const url = 'http://trizeta.duckdns.org:10001/api/ai/predict';
     const formData = new FormData();
-
+    const rawToken = token.replace(/^Bearer\s+/i, '');
+    formData.append('token',rawToken);
+    formData.append('data_type',type)
+    formData.append('fromDate',"2025-05-26 08:00:00")
+    formData.append('toDate',"2025-05-27 08:00:00")
 
     try {
         const response = await axios.postForm(url,formData);
         console.log("Dati ricevuti:", response.data);
         return response.data;
 
+    } catch (error) {
+        console.error("Errore nella chiamata API:", error);
+        console.log('URL della richiesta:', url);
+        console.log('Dettagli errore:', error.message || error);
+        throw error;
+    }
+}
+
+export async function ButtonAPI(token,type) {
+    const url = 'http://trizeta.duckdns.org:10001/api/toggle_actuator';
+    const formData = new FormData();
+    const rawToken = token.replace(/^Bearer\s+/i, '');
+    formData.append('token',rawToken);
+    formData.append('toggle_actuator',type)
+
+    try {
+        const response = await axios.postForm(url,formData);
+        console.log("Dati ricevuti:", response.data);
     } catch (error) {
         console.error("Errore nella chiamata API:", error);
         console.log('URL della richiesta:', url);

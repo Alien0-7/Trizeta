@@ -1,5 +1,6 @@
 import '../styles/Settings.css';
 import useSignOut from 'react-auth-kit/hooks/useSignOut';
+import useAuthUser from 'react-auth-kit/hooks/useAuthUser';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -7,14 +8,9 @@ export default function Settings() {
     const signOut = useSignOut();
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
+    const auth = useAuthUser();
 
-    const user = {
-        email: 'user@example.com',
-        password: '********',
-        name: 'Mario',
-        surname: 'Rossi',
-        address: 'Via Roma 123, Milano'
-    };
+
 
     const handleLogoutClick = () => setShowModal(true);
     const confirmLogout = () => {
@@ -33,11 +29,10 @@ export default function Settings() {
                     <div className="underline"></div>
                 </div>
                 <div className="inputs">
-                    <div className="input"><strong>Nome:</strong> {user.name}</div>
-                    <div className="input"><strong>Cognome:</strong> {user.surname}</div>
-                    <div className="input"><strong>Email:</strong> {user.email}</div>
-                    <div className="input"><strong>Password:</strong> {user.password}</div>
-                    <div className="input"><strong>Indirizzo:</strong> {user.address}</div>
+                    <div className="input"><strong>Nome:</strong> {auth?.name}</div>
+                    <div className="input"><strong>Cognome:</strong> {auth?.surname}</div>
+                    <div className="input"><strong>Email:</strong> {auth?.email}</div>
+                    <div className="input"><strong>Indirizzo:</strong> {auth?.address}</div>
                 </div>
 
                 <div className="submit-container">
@@ -55,6 +50,7 @@ export default function Settings() {
                             <div className="submit cancel-button" onClick={cancelLogout}>Annulla</div>
                         </div>
                     </div>
+                    
                 </div>
             )}
         </>
